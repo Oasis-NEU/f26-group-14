@@ -6,6 +6,8 @@ import Settings from './pages/settings'
 import SignIn from './pages/signin'
 import './App.css'
 
+// App shell: top nav plus one route per page in src/pages/.
+// To add a page, create it in src/pages/, import it here, and add a <Link> and <Route>.
 function App() {
   return (
     <>
