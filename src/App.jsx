@@ -1,4 +1,6 @@
+import { useState, useEffect } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
+import { supabase } from './lib/supabase'
 import Home from './pages/home'
 import Feed from './pages/feed'
 import Sell from './pages/sell'
@@ -8,7 +10,25 @@ import './App.css'
 
 // App shell: top nav plus one route per page in src/pages/.
 // To add a page, create it in src/pages/, import it here, and add a <Link> and <Route>.
+// Also tracks the logged-in user (session) so the nav can show sign in / sign out.
 function App() {
+  const [session, setSession] = useState(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session)
+    })
+
+    const { data } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession)
+    })
+    return () => data.subscription.unsubscribe()
+  }, [])
+
+  async function handleSignOut() {
+    await supabase.auth.signOut()
+  }
+
   return (
     <>
       <nav>
@@ -16,7 +36,14 @@ function App() {
         <Link to="/feed">Feed</Link> |{' '}
         <Link to="/sell">Sell</Link> |{' '}
         <Link to="/settings">Settings</Link> |{' '}
-        <Link to="/signin">Sign in</Link>
+        {session ? (
+          <>
+            {session.user.email}{' '}
+            <button onClick={handleSignOut}>Sign out</button>
+          </>
+        ) : (
+          <Link to="/signin">Sign in</Link>
+        )}
       </nav>
 
       <Routes>
