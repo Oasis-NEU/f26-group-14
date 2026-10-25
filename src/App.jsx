@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 import { supabase } from './lib/supabase'
+import RequireAuth from './components/RequireAuth'
 import Home from './pages/home'
 import Feed from './pages/feed'
 import Sell from './pages/sell'
@@ -13,10 +14,12 @@ import './App.css'
 // Also tracks the logged-in user (session) so the nav can show sign in / sign out.
 function App() {
   const [session, setSession] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session)
+      setLoading(false)
     })
 
     const { data } = supabase.auth.onAuthStateChange((_event, newSession) => {
@@ -49,8 +52,22 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/feed" element={<Feed />} />
-        <Route path="/sell" element={<Sell />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route
+          path="/sell"
+          element={
+            <RequireAuth session={session} loading={loading}>
+              <Sell />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <RequireAuth session={session} loading={loading}>
+              <Settings />
+            </RequireAuth>
+          }
+        />
         <Route path="/signin" element={<SignIn />} />
       </Routes>
     </>
