@@ -293,3 +293,150 @@
   color: white;
   font-size: 12px;
 }
+
+/* Feed: filters on the left, listings on the right. Stacks into one column on phones. */
+.feed-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 700px) {
+  .feed-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feed-filters summary {
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.feed-filters fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 16px;
+}
+
+.feed-filters legend {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.listing-card-seller {
+  display: block;
+  color: #6b7280;
+}
+
+/* Chips: the real checkbox is hidden but still focusable; the label is styled as a pill. */
+.chip {
+  display: inline-block;
+  margin: 0 6px 6px 0;
+  padding: 4px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chip-selected {
+  background: #c8102e;
+  border-color: #c8102e;
+  color: white;
+}
+
+.chip:has(input:focus-visible) {
+  outline: 2px solid #c8102e;
+  outline-offset: 2px;
+}
+
+/* Two-handle price slider: two range inputs stacked on top of each other.
+   The inputs ignore clicks except on their handles, so both handles can be dragged. */
+.price-slider {
+  position: relative;
+  height: 24px;
+  max-width: 260px;
+  margin-bottom: 8px;
+}
+
+.price-slider-rail {
+  position: absolute;
+  top: 50%;
+  left: 9px; /* half a handle's width, so the colored bar lines up with the handle centers */
+  right: 9px;
+  height: 4px;
+  transform: translateY(-50%);
+  background: #d1d5db;
+  border-radius: 2px;
+}
+
+.price-slider-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: #c8102e;
+  border-radius: 2px;
+}
+
+.price-slider input[type='range'] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  background: none;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.price-slider input[type='range']::-webkit-slider-runnable-track {
+  height: 24px;
+  background: transparent;
+}
+
+.price-slider input[type='range']::-moz-range-track {
+  background: transparent;
+}
+
+.price-slider input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  pointer-events: auto;
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: #c8102e;
+  box-shadow: 0 0 0 1px #c8102e;
+  cursor: pointer;
+}
+
+.price-slider input[type='range']::-moz-range-thumb {
+  pointer-events: auto;
+  width: 14px;
+  height: 14px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: #c8102e;
+  box-shadow: 0 0 0 1px #c8102e;
+  cursor: pointer;
+}
+
+.price-inputs {
+  display: flex;
+  gap: 8px;
+}
+
+.price-inputs input {
+  width: 80px;
+  margin-left: 4px;
+}

@@ -17,6 +17,8 @@ export default function ListingCard({ listing }) {
         {listing.status === 'sold' && <span className="sold-badge">Sold</span>}
         <div>{listing.title}</div>
         <small>{listing.meetup_location}</small>
+        {/* Only the Feed fetches the seller's name; on a profile page we already know whose listings they are. */}
+        {listing.seller && <small className="listing-card-seller">by {listing.seller.first_name}</small>}
       </div>
     </Link>
   )
