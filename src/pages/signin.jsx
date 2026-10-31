@@ -103,7 +103,7 @@ export default function SignIn() {
 
       {/* Pass location.state along so "send them back where they were going" still works after signing up. */}
       <p>
-        New to UniSwap? <Link to="/signup" state={location.state}>Create an account</Link>
+        New to HuskyExchange? <Link to="/signup" state={location.state}>Create an account</Link>
       </p>
       <p>
         <Link to="/reset-password">Forgot your password?</Link>

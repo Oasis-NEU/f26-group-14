@@ -102,9 +102,9 @@ export default function Listing({ session }) {
 
   // mailto: links open the user's email app with the address, subject, and message filled in.
   // encodeURIComponent makes spaces and symbols safe to put inside a link.
-  const emailSubject = encodeURIComponent(`UniSwap: ${listing.title}`)
+  const emailSubject = encodeURIComponent(`HuskyExchange: ${listing.title}`)
   const offerBody = encodeURIComponent(
-    `Hi ${seller.first_name}! I saw your "${listing.title}" on UniSwap. Would you take $__ for it?`,
+    `Hi ${seller.first_name}! I saw your "${listing.title}" on HuskyExchange. Would you take $__ for it?`,
   )
 
   return (

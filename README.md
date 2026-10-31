@@ -1,4 +1,4 @@
-**Uni Swap**
+**HuskyExchange**
 
 #Project Ideas/Requirements
 
