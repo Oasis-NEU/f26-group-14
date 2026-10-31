@@ -127,7 +127,7 @@ export default function Sell({ session }) {
     <div>
       <h1>Sell an item</h1>
 
-      <form className="sell-form" onSubmit={handleSubmit}>
+      <form className="form-stack" onSubmit={handleSubmit}>
         <label>
           Title
           <input

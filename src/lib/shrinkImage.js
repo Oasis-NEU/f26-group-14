@@ -1,16 +1,17 @@
 // Shrinks a photo in the browser before uploading it, so big phone photos
 // (often 5-15 MB) become a few hundred KB. Uploads and the Feed load much faster.
 
-const MAX_SIDE = 1600 // longest side in pixels; plenty for a listing photo
 const JPEG_QUALITY = 0.85 // 0 to 1; 0.85 looks the same to the eye but is far smaller
 
-export async function shrinkImage(file) {
+// maxSide is the longest side in pixels. 1600 is plenty for a listing photo;
+// profile pictures pass a smaller number since they're shown small.
+export async function shrinkImage(file, maxSide = 1600) {
   try {
     // Decode the photo into pixels. Also applies the phone's rotation info, so it isn't sideways.
     const image = await createImageBitmap(file)
 
     // Work out the new size, keeping the same shape. Never make small photos bigger.
-    const scale = Math.min(1, MAX_SIDE / Math.max(image.width, image.height))
+    const scale = Math.min(1, maxSide / Math.max(image.width, image.height))
     const width = Math.round(image.width * scale)
     const height = Math.round(image.height * scale)
 

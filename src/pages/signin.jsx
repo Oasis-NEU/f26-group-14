@@ -1,101 +1,113 @@
 import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import VerifyCodeForm from '../components/VerifyCodeForm'
 
-// Two-step sign in: (1) enter your Northeastern email and we email you a code,
-// (2) type that code in to log in.
+// Log in with Northeastern email + password.
+// If the account was never verified, offers to email a new code.
 export default function SignIn() {
   const [email, setEmail] = useState('')
-  const [code, setCode] = useState('')
-  const [codeSent, setCodeSent] = useState(false)
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [unverified, setUnverified] = useState(false) // tried to sign in to an unverified account
+  const [needsVerifying, setNeedsVerifying] = useState(false) // showing the code form
+  const location = useLocation()
 
-  // Step 1: check the email is Northeastern, then ask Supabase to email a code.
-  async function handleSendCode(event) {
-    event.preventDefault()
-    const cleanEmail = email.trim().toLowerCase()
-
-    if (!cleanEmail.endsWith('@northeastern.edu')) {
-      setMessage('Please use your Northeastern email address to sign in.')
-      return
-    }
-
-    setLoading(true)
-    const { error } = await supabase.auth.signInWithOtp({ email: cleanEmail })
-    setLoading(false)
-
-    if (error) {
-      setMessage(error.message)
-    } else {
-      setEmail(cleanEmail)
-      setCodeSent(true)
-      setMessage('We sent a code to your Northeastern email. Check Junk if you don\'t see it.')
-    }
-  }
-
-  // Step 2: send the code back to Supabase. If it matches, the user is logged in.
-  async function handleVerifyCode(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
 
     setLoading(true)
-    const { error } = await supabase.auth.verifyOtp({
-      email,
-      token: code.trim(),
-      type: 'email',
+    setMessage('')
+    setUnverified(false)
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim().toLowerCase(),
+      password,
     })
     setLoading(false)
 
-    // On success there's nothing to do here: logging in updates the session in App.jsx,
-    // and the /signin route then sends the user on to where they were going.
-    if (error) {
+    // On success there's nothing to do here: App.jsx sees the new session and
+    // the /signin route sends the user on to where they were going.
+    if (!error) return
+
+    if (error.code === 'email_not_confirmed') {
+      setMessage('Your account isn\'t verified yet.')
+      setUnverified(true)
+    } else if (error.code === 'invalid_credentials') {
+      setMessage('Wrong email or password.')
+    } else {
       setMessage(error.message)
     }
   }
 
-  // Go back to step 1, e.g. if the email was mistyped.
-  function handleUseDifferentEmail() {
-    setCodeSent(false)
-    setCode('')
-    setMessage('')
+  // Sends a new sign up code, then switches to the code form.
+  async function handleSendVerifyCode() {
+    const cleanEmail = email.trim().toLowerCase()
+    setEmail(cleanEmail)
+    const { error } = await supabase.auth.resend({ type: 'signup', email: cleanEmail })
+    if (error) {
+      setMessage(error.message)
+    } else {
+      setNeedsVerifying(true)
+    }
+  }
+
+  if (needsVerifying) {
+    return (
+      <div>
+        <h1>Verify your email</h1>
+        <VerifyCodeForm
+          email={email}
+          type="email"
+          onResend={() => supabase.auth.resend({ type: 'signup', email })}
+        />
+      </div>
+    )
   }
 
   return (
     <div>
-      <h1>Sign In</h1>
+      <h1>Sign in</h1>
 
-      {codeSent ? (
-        <form onSubmit={handleVerifyCode}>
-          <p>Code sent to {email}</p>
-          <input
-            type="text"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            placeholder="Enter code"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-          />
-          <button type="submit" disabled={loading}>
-            {loading ? 'Checking...' : 'Sign in'}
-          </button>
-          <button type="button" onClick={handleUseDifferentEmail}>
-            Use a different email
-          </button>
-        </form>
-      ) : (
-        <form onSubmit={handleSendCode}>
+      <form className="form-stack" onSubmit={handleSubmit}>
+        <label>
+          Northeastern email
           <input
             type="email"
+            autoComplete="email"
             placeholder="you@northeastern.edu"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <button type="submit" disabled={loading}>
-            {loading ? 'Sending...' : 'Send code'}
-          </button>
-        </form>
+        </label>
+
+        <label>
+          Password
+          <input
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </label>
+
+        <button type="submit" disabled={loading}>
+          {loading ? 'Signing in...' : 'Sign in'}
+        </button>
+      </form>
+
+      {message && <p>{message}</p>}
+      {unverified && (
+        <button type="button" onClick={handleSendVerifyCode}>Email me a verification code</button>
       )}
 
-      <p>{message}</p>
+      {/* Pass location.state along so "send them back where they were going" still works after signing up. */}
+      <p>
+        New to UniSwap? <Link to="/signup" state={location.state}>Create an account</Link>
+      </p>
+      <p>
+        <Link to="/reset-password">Forgot your password?</Link>
+      </p>
     </div>
   )
 }

@@ -7,6 +7,9 @@ import Feed from './pages/feed'
 import Sell from './pages/sell'
 import Settings from './pages/settings'
 import SignIn from './pages/signin'
+import SignUp from './pages/signup'
+import ResetPassword from './pages/resetpassword'
+import Profile from './pages/profile'
 import './App.css'
 
 // App shell: top nav plus one route per page in src/pages/.
@@ -44,14 +47,17 @@ function App() {
         <Link to="/">Home</Link> |{' '}
         <Link to="/feed">Feed</Link> |{' '}
         <Link to="/sell">Sell</Link> |{' '}
-        <Link to="/settings">Settings</Link> |{' '}
         {!loading && (session ? (
           <>
-            {session.user.email}{' '}
+            <Link to={`/profile/${session.user.id}`}>My profile</Link> |{' '}
+            <Link to="/settings">Settings</Link> |{' '}
             <button onClick={handleSignOut}>Sign out</button>
           </>
         ) : (
-          <Link to="/signin">Sign in</Link>
+          <>
+            <Link to="/signin">Sign in</Link> |{' '}
+            <Link to="/signup">Create account</Link>
+          </>
         ))}
       </nav>
 
@@ -70,7 +76,15 @@ function App() {
           path="/settings"
           element={
             <RequireAuth session={session} loading={loading}>
-              <Settings />
+              <Settings session={session} />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/profile/:id"
+          element={
+            <RequireAuth session={session} loading={loading}>
+              <Profile session={session} />
             </RequireAuth>
           }
         />
@@ -78,6 +92,12 @@ function App() {
           path="/signin"
           element={session ? <Navigate to={returnTo} replace /> : <SignIn />}
         />
+        <Route
+          path="/signup"
+          element={session ? <Navigate to={returnTo} replace /> : <SignUp />}
+        />
+        {/* No redirect here: entering the reset code logs you in, and you still need to pick a new password. */}
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </>
   )
