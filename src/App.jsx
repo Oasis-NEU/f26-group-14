@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, Link, Navigate } from 'react-router-dom'
+import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom'
 import { supabase } from './lib/supabase'
 import RequireAuth from './components/RequireAuth'
 import Home from './pages/home'
@@ -12,9 +12,15 @@ import './App.css'
 // App shell: top nav plus one route per page in src/pages/.
 // To add a page, create it in src/pages/, import it here, and add a <Link> and <Route>.
 // Also tracks the logged-in user (session) so the nav can show sign in / sign out.
+// Home and Feed are open to guests; pages wrapped in RequireAuth need a login.
 function App() {
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
+  const location = useLocation()
+
+  // If RequireAuth sent the user to /signin, it remembers where they were headed.
+  // Once they're logged in, send them back there (or Home if there's nowhere to return to).
+  const returnTo = location.state?.from ?? '/'
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -51,14 +57,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route
-          path="/feed"
-          element={
-            <RequireAuth session={session} loading={loading}>
-              <Feed />
-            </RequireAuth>
-          }
-        />
+        <Route path="/feed" element={<Feed />} />
         <Route
           path="/sell"
           element={
@@ -77,7 +76,7 @@ function App() {
         />
         <Route
           path="/signin"
-          element={session ? <Navigate to="/" replace /> : <SignIn />}
+          element={session ? <Navigate to={returnTo} replace /> : <SignIn />}
         />
       </Routes>
     </>

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 // Two-step sign in: (1) enter your Northeastern email and we email you a code,
@@ -10,7 +9,6 @@ export default function SignIn() {
   const [codeSent, setCodeSent] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
-  const navigate = useNavigate()
 
   // Step 1: check the email is Northeastern, then ask Supabase to email a code.
   async function handleSendCode(event) {
@@ -47,10 +45,10 @@ export default function SignIn() {
     })
     setLoading(false)
 
+    // On success there's nothing to do here: logging in updates the session in App.jsx,
+    // and the /signin route then sends the user on to where they were going.
     if (error) {
       setMessage(error.message)
-    } else {
-      navigate('/')
     }
   }
 
