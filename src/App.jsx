@@ -51,7 +51,14 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/feed" element={<Feed />} />
+        <Route
+          path="/feed"
+          element={
+            <RequireAuth session={session} loading={loading}>
+              <Feed />
+            </RequireAuth>
+          }
+        />
         <Route
           path="/sell"
           element={

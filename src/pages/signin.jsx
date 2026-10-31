@@ -1,11 +1,19 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
+// Two-step sign in: (1) enter your Northeastern email and we email you a code,
+// (2) type that code in to log in.
 export default function SignIn() {
   const [email, setEmail] = useState('')
+  const [code, setCode] = useState('')
+  const [codeSent, setCodeSent] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const navigate = useNavigate()
 
-  async function handleSubmit(event) {
+  // Step 1: check the email is Northeastern, then ask Supabase to email a code.
+  async function handleSendCode(event) {
     event.preventDefault()
     const cleanEmail = email.trim().toLowerCase()
 
@@ -14,30 +22,81 @@ export default function SignIn() {
       return
     }
 
-    const { error } = await supabase.auth.signInWithOtp({
-      email: cleanEmail,
-      options: { emailRedirectTo: window.location.origin },
-    })
+    setLoading(true)
+    const { error } = await supabase.auth.signInWithOtp({ email: cleanEmail })
+    setLoading(false)
 
     if (error) {
       setMessage(error.message)
     } else {
-      setMessage('Check your Northeastern email for a login link!')
+      setEmail(cleanEmail)
+      setCodeSent(true)
+      setMessage('We sent a code to your Northeastern email. Check Junk if you don\'t see it.')
     }
+  }
+
+  // Step 2: send the code back to Supabase. If it matches, the user is logged in.
+  async function handleVerifyCode(event) {
+    event.preventDefault()
+
+    setLoading(true)
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token: code.trim(),
+      type: 'email',
+    })
+    setLoading(false)
+
+    if (error) {
+      setMessage(error.message)
+    } else {
+      navigate('/')
+    }
+  }
+
+  // Go back to step 1, e.g. if the email was mistyped.
+  function handleUseDifferentEmail() {
+    setCodeSent(false)
+    setCode('')
+    setMessage('')
   }
 
   return (
     <div>
       <h1>Sign In</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="you@northeastern.edu"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <button type="submit">Send Login Link</button>
-      </form>
+
+      {codeSent ? (
+        <form onSubmit={handleVerifyCode}>
+          <p>Code sent to {email}</p>
+          <input
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            placeholder="Enter code"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+          />
+          <button type="submit" disabled={loading}>
+            {loading ? 'Checking...' : 'Sign in'}
+          </button>
+          <button type="button" onClick={handleUseDifferentEmail}>
+            Use a different email
+          </button>
+        </form>
+      ) : (
+        <form onSubmit={handleSendCode}>
+          <input
+            type="email"
+            placeholder="you@northeastern.edu"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <button type="submit" disabled={loading}>
+            {loading ? 'Sending...' : 'Send code'}
+          </button>
+        </form>
+      )}
+
       <p>{message}</p>
     </div>
   )
