@@ -10,6 +10,8 @@ import SignIn from './pages/signin'
 import SignUp from './pages/signup'
 import ResetPassword from './pages/resetpassword'
 import Profile from './pages/profile'
+import Listing from './pages/listing'
+import EditListing from './pages/editlisting'
 import './App.css'
 
 // App shell: top nav plus one route per page in src/pages/.
@@ -77,6 +79,15 @@ function App() {
           element={
             <RequireAuth session={session} loading={loading}>
               <Settings session={session} />
+            </RequireAuth>
+          }
+        />
+        <Route path="/listing/:id" element={<Listing session={session} />} />
+        <Route
+          path="/listing/:id/edit"
+          element={
+            <RequireAuth session={session} loading={loading}>
+              <EditListing session={session} />
             </RequireAuth>
           }
         />
