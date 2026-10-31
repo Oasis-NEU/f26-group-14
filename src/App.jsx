@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, Navigate } from 'react-router-dom'
 import { supabase } from './lib/supabase'
 import RequireAuth from './components/RequireAuth'
 import Home from './pages/home'
@@ -39,14 +39,14 @@ function App() {
         <Link to="/feed">Feed</Link> |{' '}
         <Link to="/sell">Sell</Link> |{' '}
         <Link to="/settings">Settings</Link> |{' '}
-        {session ? (
+        {!loading && (session ? (
           <>
             {session.user.email}{' '}
             <button onClick={handleSignOut}>Sign out</button>
           </>
         ) : (
           <Link to="/signin">Sign in</Link>
-        )}
+        ))}
       </nav>
 
       <Routes>
@@ -75,7 +75,10 @@ function App() {
             </RequireAuth>
           }
         />
-        <Route path="/signin" element={<SignIn />} />
+        <Route
+          path="/signin"
+          element={session ? <Navigate to="/" replace /> : <SignIn />}
+        />
       </Routes>
     </>
   )
