@@ -440,3 +440,14 @@
   width: 80px;
   margin-left: 4px;
 }
+
+.campus-filter {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.campus-filter select {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+}

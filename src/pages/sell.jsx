@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { CATEGORIES, CONDITIONS, PAYMENT_METHODS, MEETUP_LOCATIONS } from '../lib/listingOptions'
+import { CATEGORIES, CONDITIONS, PAYMENT_METHODS, CAMPUS_NAMES, getMeetupSpots } from '../lib/listingOptions'
 import { shrinkImage } from '../lib/shrinkImage'
 
 const MAX_PHOTO_SIZE = 5 * 1024 * 1024 // 5 MB, same limit as the storage bucket
@@ -15,6 +15,7 @@ export default function Sell({ session }) {
   const [price, setPrice] = useState('')
   const [category, setCategory] = useState('')
   const [condition, setCondition] = useState('')
+  const [campus, setCampus] = useState('')
   const [meetupLocation, setMeetupLocation] = useState('')
   const [paymentMethods, setPaymentMethods] = useState([])
   const [photo, setPhoto] = useState(null)
@@ -22,6 +23,29 @@ export default function Sell({ session }) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
+  const userId = session.user.id
+
+  // Start the Campus dropdown on the campus saved in the user's profile (if they set one).
+  useEffect(() => {
+    let ignore = false
+
+    async function loadProfileCampus() {
+      const { data } = await supabase.from('profiles').select('campus').eq('id', userId).single()
+      // Only fill it in if the user hasn't already picked a campus themselves.
+      if (!ignore && data?.campus) setCampus((current) => current || data.campus)
+    }
+
+    loadProfileCampus()
+    return () => {
+      ignore = true
+    }
+  }, [userId])
+
+  // Meetup spots depend on the campus, so changing campus clears the old spot.
+  function handleCampusChange(newCampus) {
+    setCampus(newCampus)
+    setMeetupLocation('')
+  }
 
   // Checking a box adds that method to the list; unchecking removes it.
   function togglePaymentMethod(method) {
@@ -58,6 +82,7 @@ export default function Sell({ session }) {
     if (price === '' || Number(price) < 0) return 'Please enter a price of 0 or more.'
     if (category === '') return 'Please pick a category.'
     if (condition === '') return 'Please pick a condition.'
+    if (campus === '') return 'Please pick your campus.'
     if (meetupLocation === '') return 'Please pick a meetup location.'
     if (paymentMethods.length === 0) return 'Please pick at least one payment method.'
     if (photo && !ALLOWED_PHOTO_TYPES.includes(photo.type)) return 'Photo must be a JPEG, PNG, or WebP image.'
@@ -104,6 +129,7 @@ export default function Sell({ session }) {
       price: Number(price),
       category,
       condition,
+      campus,
       meetup_location: meetupLocation,
       payment_methods: paymentMethods,
       photo_url: photoUrl,
@@ -182,10 +208,24 @@ export default function Sell({ session }) {
         </label>
 
         <label>
+          Campus
+          <select value={campus} onChange={(e) => handleCampusChange(e.target.value)}>
+            <option value="">Choose your campus</option>
+            {CAMPUS_NAMES.map((name) => (
+              <option key={name} value={name}>{name}</option>
+            ))}
+          </select>
+        </label>
+
+        <label>
           Meetup location
-          <select value={meetupLocation} onChange={(e) => setMeetupLocation(e.target.value)}>
-            <option value="">Choose a spot on campus</option>
-            {MEETUP_LOCATIONS.map((place) => (
+          <select
+            value={meetupLocation}
+            onChange={(e) => setMeetupLocation(e.target.value)}
+            disabled={campus === ''}
+          >
+            <option value="">{campus === '' ? 'Pick a campus first' : 'Choose a spot on campus'}</option>
+            {getMeetupSpots(campus).map((place) => (
               <option key={place} value={place}>{place}</option>
             ))}
           </select>

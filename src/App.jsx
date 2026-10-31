@@ -63,7 +63,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/feed" element={<Feed />} />
+        <Route path="/feed" element={<Feed session={session} />} />
         <Route
           path="/sell"
           element={

@@ -2,14 +2,16 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import VerifyCodeForm from '../components/VerifyCodeForm'
+import { CAMPUS_NAMES } from '../lib/listingOptions'
 
 const MIN_PASSWORD_LENGTH = 8
 
-// Create an account: name, Northeastern email, password.
+// Create an account: name, campus (optional), Northeastern email, password.
 // Supabase then emails a code to prove the email is really theirs.
 export default function SignUp() {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [campus, setCampus] = useState('') // optional
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -40,12 +42,12 @@ export default function SignUp() {
     setLoading(true)
     setMessage('')
     // "data" is extra info saved with the account. The profiles trigger in
-    // supabase/profiles.sql copies first_name and last_name into the new profile.
+    // supabase/campuses.sql copies first_name, last_name and campus into the new profile.
     const { data, error } = await supabase.auth.signUp({
       email: cleanEmail,
       password,
       options: {
-        data: { first_name: firstName.trim(), last_name: lastName.trim() },
+        data: { first_name: firstName.trim(), last_name: lastName.trim(), campus },
       },
     })
     setLoading(false)
@@ -99,6 +101,16 @@ export default function SignUp() {
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
           />
+        </label>
+
+        <label>
+          Campus (optional)
+          <select value={campus} onChange={(e) => setCampus(e.target.value)}>
+            <option value="">Choose later</option>
+            {CAMPUS_NAMES.map((name) => (
+              <option key={name} value={name}>{name}</option>
+            ))}
+          </select>
         </label>
 
         <label>

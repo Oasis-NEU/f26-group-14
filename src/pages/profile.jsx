@@ -22,12 +22,12 @@ export default function Profile({ session }) {
       const [profileResult, listingsResult] = await Promise.all([
         supabase
           .from('profiles')
-          .select('id, first_name, last_name, bio, avatar_url, created_at')
+          .select('id, first_name, last_name, bio, avatar_url, created_at, campus')
           .eq('id', id)
           .maybeSingle(),
         supabase
           .from('listings')
-          .select('id, title, price, photo_url, status, meetup_location')
+          .select('id, title, price, photo_url, status, campus, meetup_location')
           .eq('seller_id', id)
           .order('created_at', { ascending: false }),
       ])
@@ -65,6 +65,7 @@ export default function Profile({ session }) {
         <Avatar url={profile.avatar_url} name={profile.first_name} />
         <div>
           <h1>{fullName}</h1>
+          {profile.campus && <p>{profile.campus} campus</p>}
           <p>Member since {memberSince}</p>
           {isMyProfile && <Link to="/settings">Edit profile</Link>}
         </div>

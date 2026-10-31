@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { shrinkImage } from '../lib/shrinkImage'
+import { CAMPUS_NAMES } from '../lib/listingOptions'
 import Avatar from '../components/Avatar'
 
 const AVATAR_SIZE = 400 // profile pictures are shown small, so 400px is plenty
@@ -13,6 +14,7 @@ export default function Settings({ session }) {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [bio, setBio] = useState('')
+  const [campus, setCampus] = useState('') // '' means not set
   const [avatarUrl, setAvatarUrl] = useState('') // the picture already saved
   const [newAvatar, setNewAvatar] = useState(null) // a picture picked but not saved yet
   const [previewUrl, setPreviewUrl] = useState('')
@@ -27,7 +29,7 @@ export default function Settings({ session }) {
     async function load() {
       const { data, error } = await supabase
         .from('profiles')
-        .select('first_name, last_name, bio, avatar_url')
+        .select('first_name, last_name, bio, avatar_url, campus')
         .eq('id', userId)
         .single()
 
@@ -38,6 +40,7 @@ export default function Settings({ session }) {
         setFirstName(data.first_name)
         setLastName(data.last_name ?? '')
         setBio(data.bio)
+        setCampus(data.campus ?? '')
         setAvatarUrl(data.avatar_url ?? '')
       }
       setLoading(false)
@@ -103,6 +106,7 @@ export default function Settings({ session }) {
       .update({
         first_name: firstName.trim(),
         last_name: lastName.trim() || null,
+        campus: campus || null,
         bio: bio.trim(),
         avatar_url: savedAvatarUrl,
       })
@@ -148,6 +152,17 @@ export default function Settings({ session }) {
         <label>
           Last name (optional)
           <input type="text" maxLength={50} value={lastName} onChange={(e) => setLastName(e.target.value)} />
+        </label>
+
+        <label>
+          Campus (optional)
+          <select value={campus} onChange={(e) => setCampus(e.target.value)}>
+            <option value="">Not set</option>
+            {CAMPUS_NAMES.map((name) => (
+              <option key={name} value={name}>{name}</option>
+            ))}
+          </select>
+          <small>Fills in automatically when you sell, and shows your campus first in the Feed.</small>
         </label>
 
         <label>

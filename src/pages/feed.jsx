@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { CATEGORIES, PAYMENT_METHODS } from '../lib/listingOptions'
+import { CATEGORIES, PAYMENT_METHODS, CAMPUS_NAMES } from '../lib/listingOptions'
 import ListingCard from '../components/ListingCard'
 import ChipFilter from '../components/ChipFilter'
 import PriceRangeFilter from '../components/PriceRangeFilter'
 
 const FILTER_DELAY_MS = 300 // wait until the user pauses before asking the database again
 
-// Every listing for sale, newest first, with filters for category, price, and payment method.
-// Open to guests. Filters start empty, which means "show everything".
-export default function Feed() {
+// Every listing for sale, newest first, with filters for campus, category, price, and payment method.
+// Open to guests. Filters start empty ("show everything"), except that logged-in users
+// who set a campus in their profile start out seeing their own campus.
+export default function Feed({ session }) {
+  const [campus, setCampus] = useState('') // '' means all campuses
   const [categories, setCategories] = useState([])
   const [paymentMethods, setPaymentMethods] = useState([])
   const [minPrice, setMinPrice] = useState('')
@@ -17,6 +19,23 @@ export default function Feed() {
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+
+  // If the user is logged in and has a campus in their profile, start the campus filter on it.
+  const userId = session?.user.id
+  useEffect(() => {
+    if (!userId) return
+    let ignore = false
+
+    async function loadProfileCampus() {
+      const { data } = await supabase.from('profiles').select('campus').eq('id', userId).single()
+      if (!ignore && data?.campus) setCampus(data.campus)
+    }
+
+    loadProfileCampus()
+    return () => {
+      ignore = true
+    }
+  }, [userId])
 
   // Re-run the search whenever a filter changes.
   useEffect(() => {
@@ -29,10 +48,11 @@ export default function Feed() {
       // "seller:profiles(first_name)" also fetches each seller's first name from their profile.
       let query = supabase
         .from('listings')
-        .select('id, title, price, photo_url, status, meetup_location, seller:profiles(first_name)')
+        .select('id, title, price, photo_url, status, campus, meetup_location, seller:profiles(first_name)')
         .eq('status', 'available')
 
       // Add only the filters the user has actually set.
+      if (campus !== '') query = query.eq('campus', campus)
       if (categories.length > 0) query = query.in('category', categories)
       if (paymentMethods.length > 0) query = query.overlaps('payment_methods', paymentMethods)
       if (minPrice !== '') query = query.gte('price', Number(minPrice))
@@ -55,9 +75,10 @@ export default function Feed() {
       ignore = true
       clearTimeout(timer)
     }
-  }, [categories, paymentMethods, minPrice, maxPrice])
+  }, [campus, categories, paymentMethods, minPrice, maxPrice])
 
   function clearFilters() {
+    setCampus('')
     setCategories([])
     setPaymentMethods([])
     setMinPrice('')
@@ -65,6 +86,7 @@ export default function Feed() {
   }
 
   const activeFilterCount =
+    (campus !== '' ? 1 : 0) +
     categories.length + paymentMethods.length + (minPrice !== '' ? 1 : 0) + (maxPrice !== '' ? 1 : 0)
   const minAboveMax = minPrice !== '' && maxPrice !== '' && Number(minPrice) > Number(maxPrice)
 
@@ -77,6 +99,16 @@ export default function Feed() {
           <summary>
             Filters{activeFilterCount > 0 && ` (${activeFilterCount})`}
           </summary>
+
+          <label className="campus-filter">
+            <strong>Campus</strong>
+            <select value={campus} onChange={(e) => setCampus(e.target.value)}>
+              <option value="">All campuses</option>
+              {CAMPUS_NAMES.map((name) => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+            </select>
+          </label>
 
           <ChipFilter legend="Category" options={CATEGORIES} selected={categories} onChange={setCategories} />
           <PriceRangeFilter
