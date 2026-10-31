@@ -63,7 +63,7 @@ function App() {
           path="/sell"
           element={
             <RequireAuth session={session} loading={loading}>
-              <Sell />
+              <Sell session={session} />
             </RequireAuth>
           }
         />

@@ -182,3 +182,45 @@
     border-right-color: var(--border);
   }
 }
+
+/* Sell form: put each field on its own line. Full styling comes later. */
+.sell-form label,
+.sell-form fieldset {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.sell-form label > input:not([type='checkbox']),
+.sell-form select,
+.sell-form textarea {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+}
+
+.sell-form fieldset label {
+  display: inline-block;
+  margin-right: 12px;
+}
+
+/* Photo buttons: hide the real file input and make its label look like a button. */
+.sell-form .photo-button {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 6px 12px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sell-form .photo-button input[type='file'] {
+  display: none;
+}
+
+.photo-preview {
+  display: block;
+  max-width: 240px;
+  max-height: 240px;
+  margin: 12px 0 8px;
+  border-radius: 6px;
+}
