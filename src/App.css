@@ -182,3 +182,355 @@
     border-right-color: var(--border);
   }
 }
+
+/* Forms (Sell, Sign up, Settings...): put each field on its own line. Full styling comes later. */
+.form-stack label,
+.form-stack fieldset {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.form-stack label > input:not([type='checkbox']),
+.form-stack select,
+.form-stack textarea {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-stack fieldset label {
+  display: inline-block;
+  margin-right: 12px;
+}
+
+/* Photo buttons: hide the real file input and make its label look like a button. */
+.form-stack .photo-button {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 6px 12px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.form-stack .photo-button input[type='file'] {
+  display: none;
+}
+
+.photo-preview {
+  display: block;
+  max-width: 240px;
+  max-height: 240px;
+  margin: 12px 0 8px;
+  border-radius: 6px;
+}
+
+/* Round profile pictures (see components/Avatar.jsx). */
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-bg, #e5e7eb);
+  color: var(--accent, #374151);
+  font-weight: bold;
+}
+
+/* Profile page */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-bio {
+  white-space: pre-wrap; /* keep the line breaks people type in their bio */
+  max-width: 600px;
+}
+
+/* Grid of listing cards: as many 180px+ columns as fit, so it works on phones and laptops. */
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.listing-card {
+  display: block;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  overflow: hidden;
+  color: inherit;
+  text-decoration: none;
+}
+
+.listing-card img,
+.listing-card-no-photo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.listing-card-info {
+  padding: 8px;
+}
+
+.sold-badge {
+  margin-left: 8px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #6b7280;
+  color: white;
+  font-size: 12px;
+}
+
+/* Feed: filters on the left, listings on the right. Stacks into one column on phones. */
+.feed-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 700px) {
+  .feed-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feed-filters summary {
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.feed-filters fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 16px;
+}
+
+.feed-filters legend {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.listing-card-seller {
+  display: block;
+  color: #6b7280;
+}
+
+/* Chips: the real checkbox is hidden but still focusable; the label is styled as a pill. */
+.chip {
+  display: inline-block;
+  margin: 0 6px 6px 0;
+  padding: 4px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chip-selected {
+  background: #c8102e;
+  border-color: #c8102e;
+  color: white;
+}
+
+.chip:has(input:focus-visible) {
+  outline: 2px solid #c8102e;
+  outline-offset: 2px;
+}
+
+/* Two-handle price slider: two range inputs stacked on top of each other.
+   The inputs ignore clicks except on their handles, so both handles can be dragged. */
+.price-slider {
+  position: relative;
+  height: 24px;
+  max-width: 260px;
+  margin-bottom: 8px;
+}
+
+.price-slider-rail {
+  position: absolute;
+  top: 50%;
+  left: 9px; /* half a handle's width, so the colored bar lines up with the handle centers */
+  right: 9px;
+  height: 4px;
+  transform: translateY(-50%);
+  background: #d1d5db;
+  border-radius: 2px;
+}
+
+.price-slider-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: #c8102e;
+  border-radius: 2px;
+}
+
+.price-slider input[type='range'] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  background: none;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.price-slider input[type='range']::-webkit-slider-runnable-track {
+  height: 24px;
+  background: transparent;
+}
+
+.price-slider input[type='range']::-moz-range-track {
+  background: transparent;
+}
+
+.price-slider input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  pointer-events: auto;
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: #c8102e;
+  box-shadow: 0 0 0 1px #c8102e;
+  cursor: pointer;
+}
+
+.price-slider input[type='range']::-moz-range-thumb {
+  pointer-events: auto;
+  width: 14px;
+  height: 14px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: #c8102e;
+  box-shadow: 0 0 0 1px #c8102e;
+  cursor: pointer;
+}
+
+.price-inputs {
+  display: flex;
+  gap: 8px;
+}
+
+.price-inputs input {
+  width: 80px;
+  margin-left: 4px;
+}
+
+.campus-filter {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.campus-filter select {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+}
+
+/* Listing page: photo on the left, details on the right. Stacks on phones. */
+.listing-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 700px) {
+  .listing-page {
+    grid-template-columns: 1fr;
+  }
+}
+
+.listing-photo img,
+.listing-photo .listing-card-no-photo {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.listing-page h1 .sold-badge {
+  vertical-align: middle;
+}
+
+.listing-price {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0 0 16px;
+}
+
+/* Label / value pairs (Condition: Good, Campus: Boston, ...) in two columns. */
+.listing-facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 16px;
+  margin: 0 0 16px;
+}
+
+.listing-facts dt {
+  color: #6b7280;
+}
+
+.listing-facts dd {
+  margin: 0;
+}
+
+.listing-description {
+  white-space: pre-wrap; /* keep the line breaks the seller typed */
+}
+
+.listing-seller {
+  margin: 16px 0;
+}
+
+.listing-seller-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.listing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.safety-tips {
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.safety-tips ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
