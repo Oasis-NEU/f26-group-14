@@ -2,7 +2,7 @@
 
 - **Status:** Proposed
 - **Date:** 2026-11-01
-- **Owner:** Austin
+- **Owner:** Zane
 - **Related tasks:** SEC-01, SEC-02, SEC-03
 
 ## Context
@@ -40,7 +40,7 @@ form-action 'self';
 object-src 'none'
 ```
 
-Sketch for `vercel.json` (Austin finalizes it in SEC-02):
+Sketch for `vercel.json` (Zane finalizes it in SEC-02):
 
 ```json
 {

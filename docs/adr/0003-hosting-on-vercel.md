@@ -2,7 +2,7 @@
 
 - **Status:** Proposed
 - **Date:** 2026-11-01
-- **Owner:** Austin
+- **Owner:** Adel
 - **Related tasks:** OPS-01, OPS-02, OPS-03, SEC-02
 
 ## Context

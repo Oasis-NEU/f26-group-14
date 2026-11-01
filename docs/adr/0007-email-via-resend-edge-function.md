@@ -22,7 +22,7 @@ We need to email students: "someone's interested", move-out reminders, a welcome
   - an `interests` insert → seller email (MAIL-05)
   - a daily `pg_cron` job → expiry and move-out reminders (MAIL-06)
   - first sign-in → welcome email (MAIL-07)
-- Templates are built with React Email and use Adel's design tokens.
+- Templates are built with React Email and use Austin's design tokens.
 - Supabase Auth's SMTP is also pointed at Resend, so the sign-in emails share the same verified domain (MAIL-03).
 
 ## Consequences
