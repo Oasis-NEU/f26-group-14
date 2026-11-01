@@ -71,7 +71,7 @@ npm run build    # production build
 npm run lint     # ESLint
 ```
 
-There's no test runner yet. Check your work with `npm run lint`, `npm run build`, and by opening the app.
+The test runner (Vitest, `npm test`) is being added in task OPS-05. Every feature has required tests listed in [docs/workflow/testing.md](docs/workflow/testing.md); write them first. Until `npm test` exists, check your work with `npm run lint`, `npm run build`, and by opening the app.
 
 ### Layout
 
@@ -100,10 +100,14 @@ Each developer owns one workstream and has a subagent for it. Start a session wi
 
 | Dev | Subagent | Owns | Stack to connect (`/mcp`) |
 |---|---|---|---|
-| Adel | `design-system` | Design template (everyone copies `/styleguide`), Settings, Home | frontend-design, Playwright |
-| Sanket | `feed-and-data` | Schema, RLS, storage, Feed, listing detail | Supabase |
-| Zane | `sell-and-email` | Sell flow, transactional email | Resend, Supabase Edge Functions |
-| Austin | `auth-and-security` | Auth, security headers, deploys, CI, Sentry | Vercel, Sentry |
+| Austin | `design-system` | Full-time frontend: design system, 5 page templates (`/templates/*`) everyone copies, motion | frontend-design, Playwright |
+| Adel | `account-and-deploy` | Sign-in, Settings, Home, Vercel deploys, CI | Vercel, Supabase Auth |
+| Sanket | `feed-and-data` | Schema, RLS, storage, Feed, listing detail, auth hook, Vitest | Supabase |
+| Zane | `sell-email-security` | Sell flow, transactional email, security headers, RLS review, Sentry | Resend, Sentry, Supabase Edge Functions |
+
+UI work: build from Austin's templates and `src/components/ui/`, and read `docs/guides/frontend-design.md` (once it exists) before using the `frontend-design` skill.
+
+**How work flows:** follow [docs/workflow/](docs/workflow/README.md). It covers the session loop, branch and commit names, the PR template (`.github/pull_request_template.md`), review pairs, the definition of done, and the tests required for each task.
 
 **Every Claude session, whether it's a subagent or not, follows these rules:**
 
@@ -114,7 +118,7 @@ Each developer owns one workstream and has a subagent for it. Start a session wi
 5. When the PR merges, tick `[x] (#PR)`. Put newly found work in the dev's section with the next ID, or in the Backlog.
 6. Edit only your own section of the plan; cross-team items go under Shared.
 
-### Conventions
+## Conventions
 
 - Keep commit messages short and in the imperative mood, e.g. "Add page routing with react-router".
 - **Claude: don't credit yourself on commits or PRs.** When committing, pushing, or opening a PR, leave out the `Co-Authored-By: Claude ...` trailer and the "Generated with Claude Code" line. Commits and PRs should list only the teammate who asked for them as the author.

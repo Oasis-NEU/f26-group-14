@@ -1,6 +1,6 @@
 # 0006. Data model and row-level security
 
-- **Status:** Proposed. Sanket finalizes this with Zane and Adel (SH-01)
+- **Status:** Proposed. Sanket finalizes this with Zane and Austin (SH-01)
 - **Date:** 2026-11-01
 - **Owner:** Sanket
 - **Related tasks:** DATA-01 through DATA-08, SELL-01, FEED-06, SEC-04
@@ -42,5 +42,5 @@ Storage bucket `listing-images`: users can only write to the `<uid>/...` folder,
 ## Consequences
 
 - Payment handles are visible to every signed-in student. That's intended (it's how payment happens), and the Settings page has to say so (SET-03).
-- Any new table ships **with** its RLS policies in the same migration. Austin reviews each one (SEC-04).
+- Any new table ships **with** its RLS policies in the same migration. Zane reviews each one (SEC-04).
 - **No user Stripe secret keys, ever.** If we add Stripe, we store a Payment Link URL instead (see the Backlog in the project plan).

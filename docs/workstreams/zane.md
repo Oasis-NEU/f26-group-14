@@ -1,14 +1,14 @@
 # Zane — Workstream log
 
-- **Owns:** Sell flow, photo upload, listing expiry, all transactional email
-- **Claude subagent:** [`sell-and-email`](../../.claude/agents/sell-and-email.md). Start a session with *"Use the `sell-and-email` agent to pick up my next task."*
-- **Stack connection:** **Resend**: run `/mcp` and sign in to resend. Supabase Edge Functions (ask Sanket for access)
-- **ADRs owned:** [0007 Email via Resend](../adr/0007-email-via-resend-edge-function.md)
+- **Owns:** Sell flow, photo upload, listing expiry, all transactional email, security (Helmet-equivalent headers, RLS review, secrets, scans), Sentry
+- **Claude subagent:** [`sell-email-security`](../../.claude/agents/sell-email-security.md). Start a session with *"Use the `sell-email-security` agent to pick up my next task."*
+- **Stack connection:** **Resend** and **Sentry**: run `/mcp` and sign in to both. Supabase Edge Functions (ask Sanket for access)
+- **ADRs owned:** [0004 Security headers](../adr/0004-security-headers.md), [0007 Email via Resend](../adr/0007-email-via-resend-edge-function.md)
 - **Tasks:** see your section in [PROJECT_PLAN.md](../PROJECT_PLAN.md)
 
 ## Current focus
 
-_Next up: MAIL-01 and MAIL-02 (Resend domain) while Sanket finalizes the schema, then SELL-01._
+_Next up: MAIL-01 and MAIL-02 (Resend domain) and SEC-01 (finalize the headers ADR) while Sanket finalizes the schema, then SELL-01 from TPL-04._
 
 ## Open questions / blockers
 
@@ -27,7 +27,12 @@ Newest entry first, one per working session or PR. Your Claude writes these and 
 - **Next / blocked on:** ...
 ```
 
+### 2026-11-01 — Reassigned
+
+- **Did:** Took over SEC-01..06, SEC-09 (security headers, RLS review, secrets, scan), and OPS-06 (Sentry) from Austin. Subagent `sell-and-email` was renamed to `sell-email-security`.
+- **Decisions:** none (team reshuffle; see the note at the top of PROJECT_PLAN.md)
+
 ### 2026-11-01 — Workstream created
 
 - **Did:** Assigned in the project plan; subagent and log created.
-- **Next / blocked on:** Phase 0 setup, then MAIL-01.
+- **Next / blocked on:** Phase 0 setup.

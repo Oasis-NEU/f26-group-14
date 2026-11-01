@@ -1,13 +1,13 @@
 # 0008. Design system and styling approach
 
-- **Status:** Proposed. Adel picks the option and gets a 👍 from the team (DS-01)
+- **Status:** Proposed. Austin picks the option and gets a 👍 from the team (DS-01)
 - **Date:** 2026-11-01
-- **Owner:** Adel
+- **Owner:** Austin
 - **Related tasks:** DS-01 through DS-08
 
 ## Context
 
-Four people build pages at the same time. If each one styles their pages their own way, the app ends up looking like four apps. Adel builds one template (tokens, components, and a `/styleguide` page), and everyone copies it.
+Four people build pages at the same time. If each one styles their pages their own way, the app ends up looking like four apps. Austin builds the templates (tokens, components, and a `/styleguide` page), and everyone copies it.
 
 ## Options considered
 
@@ -22,7 +22,7 @@ Option 2: **CSS Modules for components, with design tokens as CSS custom propert
 Rules for everyone:
 - Use tokens (`var(--space-3)`, `var(--color-accent)`), not raw hex codes or pixel values.
 - If a component exists in `src/components/ui/`, use it instead of building another one.
-- Need a new shared component? Add it to `ui/` and the styleguide page, or ask Adel.
+- Need a new shared component? Add it to `ui/` and the styleguide page, or ask Austin.
 
 ## Consequences
 

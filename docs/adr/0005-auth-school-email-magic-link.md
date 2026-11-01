@@ -2,7 +2,7 @@
 
 - **Status:** Proposed
 - **Date:** 2026-11-01
-- **Owner:** Austin
+- **Owner:** Adel
 - **Related tasks:** AUTH-01 through AUTH-06, MAIL-03
 
 ## Context

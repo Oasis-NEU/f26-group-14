@@ -1,6 +1,6 @@
 # Sanket — Workstream log
 
-- **Owns:** Supabase schema, migrations, RLS, storage, Feed, listing detail
+- **Owns:** Supabase schema, migrations, RLS, storage, Feed, listing detail, server-side email-domain hook, reports, test runner
 - **Claude subagent:** [`feed-and-data`](../../.claude/agents/feed-and-data.md). Start a session with *"Use the `feed-and-data` agent to pick up my next task."*
 - **Stack connection:** **Supabase**: run `/mcp` and sign in to supabase
 - **ADRs owned:** [0006 Data model & RLS](../adr/0006-data-model-and-rls.md)
@@ -8,7 +8,7 @@
 
 ## Current focus
 
-_Next up: DATA-01 (agree on `listings` columns with Zane and Adel), then DATA-02 migrations._
+_Next up: **OPS-05 (Vitest) first, since everyone's tests depend on it**, then DATA-01 (agree on `listings` columns with Zane and Austin), DATA-02 migrations, and AUTH-03 (school-email hook)._
 
 ## Open questions / blockers
 
@@ -27,7 +27,12 @@ Newest entry first, one per working session or PR. Your Claude writes these and 
 - **Next / blocked on:** ...
 ```
 
+### 2026-11-01 — Reassigned
+
+- **Did:** Took over AUTH-03 (server-side school-email hook), SEC-07 (reports/abuse), and OPS-05 (Vitest) from Austin. Feed and Detail now copy Austin's TPL-02 and TPL-03.
+- **Decisions:** none (team reshuffle; see the note at the top of PROJECT_PLAN.md)
+
 ### 2026-11-01 — Workstream created
 
 - **Did:** Assigned in the project plan; subagent and log created.
-- **Next / blocked on:** Phase 0 setup, then DATA-01.
+- **Next / blocked on:** Phase 0 setup.
