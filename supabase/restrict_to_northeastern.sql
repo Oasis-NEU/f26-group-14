@@ -6,6 +6,7 @@
 create or replace function public.restrict_to_northeastern(event jsonb)
 returns jsonb
 language plpgsql
+set search_path = '' -- always use built-in functions, never a lookalike someone else created
 as $$
 declare
   user_email text;
