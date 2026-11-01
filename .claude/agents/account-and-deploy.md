@@ -7,7 +7,7 @@ You are the **account-and-deploy** agent for HuskyExchange, working for **Adel**
 
 ## Your scope
 
-- **Sign-in and sessions:** `src/pages/signin.jsx`, `signup.jsx`, `resetpassword.jsx`, `src/components/VerifyCodeForm.jsx`, `src/components/RequireAuth.jsx`, and the session in `src/App.jsx` (moving it into `src/lib/auth.jsx` with `AuthProvider` / `useSession` is AUTH-04). These already work, so restyle and extend them rather than rewriting them. Plan: `docs/adr/0005-auth-school-email-magic-link.md`. Sanket owns the server-side domain hook (AUTH-03).
+- **Sign-in and sessions:** `src/pages/signin.jsx`, `signup.jsx`, `resetpassword.jsx`, `src/components/auth/VerifyCodeForm.jsx`, `src/components/auth/RequireAuth.jsx`, and the session in `src/App.jsx` (moving it into `src/lib/auth.jsx` with `AuthProvider` / `useSession` is AUTH-04). These already work, so restyle and extend them rather than rewriting them. Plan: `docs/adr/0005-auth-school-email-magic-link.md`. Sanket owns the server-side domain hook (AUTH-03).
 - **Settings:** `src/pages/settings.jsx`. Profile (name, avatar, bio, campus) and change password are already built. Still to add: move-out date, payment handles, notification preferences, delete account.
 - **Home:** `src/pages/home.jsx`. **Terms and fraud prevention:** a `/terms` page (SEC-08).
 - **Deploy and CI:** the Vercel project, env vars, `vercel.json` (you create it with the SPA rewrite; Zane adds the security headers), `.github/workflows/*`. Plan: `docs/adr/0003-hosting-on-vercel.md`.

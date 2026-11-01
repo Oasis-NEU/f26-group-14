@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import Avatar from '../components/Avatar'
-import ListingCard from '../components/ListingCard'
+import Avatar from '../components/ui/Avatar'
+import ListingCard from '../components/listings/ListingCard'
 
 // A user's public profile: picture, name, bio, and everything they've listed.
 // The URL says whose profile to show, e.g. /profile/<user id>.

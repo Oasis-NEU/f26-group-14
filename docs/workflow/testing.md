@@ -94,19 +94,30 @@ Each task's PR must include the tests in its row. You can add more, but not fewe
 |---|---|
 | **SH-03** | Playwright: sign in (an auto-confirmed test user) → create listing → it appears in the feed → message the seller → the seller sees the message, and the email function was called. |
 
+### Security fixes from the audit of #6 (pgTAP, `supabase/tests/`)
+
+| Task | Required tests |
+|---|---|
+| **DATA-14** | As user A, selecting `seller_email` for B's listing fails or returns nothing |
+| **DATA-15** | Inserting or updating a listing with your own `created_at`, `seller_id`, or `seller_email` fails |
+| **DATA-16** | Setting `photo_url` or `avatar_url` to an outside URL fails; an over-length `meetup_location` fails |
+| **DATA-17** | As the owner, replacing a listing photo actually removes the old object (integration check on the dev project) |
+| **AUTH-09** | Changing your email to `a@gmail.com` is rejected |
+
 ## Already built: backfill (TEST-01)
 
 These features were built (merged in #6) before the test rules existed. Each owner adds the tests in the rows marked **(built)** above as soon as OPS-05 lands. Pull logic out into `src/lib/` where the row says so, so it can be unit-tested.
 
 | Feature | Files | Owner |
 |---|---|---|
-| Sign up, sign in, reset password, code step | `src/pages/signup.jsx`, `signin.jsx`, `resetpassword.jsx`, `src/components/VerifyCodeForm.jsx` | Adel |
-| Route guard and return-after-sign-in | `src/components/RequireAuth.jsx`, `src/App.jsx` | Adel |
+| Sign up, sign in, reset password, code step | `src/pages/signup.jsx`, `signin.jsx`, `resetpassword.jsx`, `src/components/auth/VerifyCodeForm.jsx` | Adel |
+| Route guard and return-after-sign-in | `src/components/auth/RequireAuth.jsx`, `src/App.jsx` | Adel |
 | Settings profile and change password | `src/pages/settings.jsx` | Adel |
 | Server-side email-domain hook, RLS, profile trigger | `supabase/*.sql` → `supabase/tests/*.sql` | Sanket |
-| Feed, filters, listing page, profile page | `src/pages/feed.jsx`, `listing.jsx`, `profile.jsx`, `src/components/ChipFilter.jsx`, `PriceRangeFilter.jsx`, `ListingCard.jsx` | Sanket |
+| Feed, filters, listing page, profile page | `src/pages/feed.jsx`, `listing.jsx`, `profile.jsx`, `src/components/ui/ChipFilter.jsx`, `PriceRangeFilter.jsx`, `ListingCard.jsx` | Sanket |
 | Price formatting, option lists | `src/lib/formatPrice.js`, `src/lib/listingOptions.js` | Sanket |
-| Sell / Edit form, photo shrinking, photo cleanup | `src/components/ListingForm.jsx`, `src/lib/shrinkImage.js`, `src/lib/listingPhotos.js` | Zane |
+| Sell / Edit form, photo shrinking, photo cleanup | `src/components/listings/ListingForm.jsx`, `src/lib/shrinkImage.js`, `src/lib/listingPhotos.js` | Zane |
+
 
 ## Adding a new feature
 
