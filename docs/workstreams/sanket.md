@@ -8,7 +8,7 @@
 
 ## Current focus
 
-_Next up: DATA-01 (agree on `listings` columns with Zane and Austin), then DATA-02 migrations and AUTH-03 (school-email hook)._
+_Next up: **OPS-05 (Vitest) first, since everyone's tests depend on it**, then DATA-01 (agree on `listings` columns with Zane and Austin), DATA-02 migrations, and AUTH-03 (school-email hook)._
 
 ## Open questions / blockers
 

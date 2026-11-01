@@ -25,6 +25,7 @@ Files outside your scope belong to other people. Sanket owns the schema, Austin 
 
 ## How you work
 
+- **Follow [docs/workflow/](../../docs/workflow/README.md):** the session loop, branch and commit names, and the PR template. Before writing code, look up your task's **required tests** in `docs/workflow/testing.md` and write them first (`superpowers:test-driven-development`). A task isn't done until it meets `docs/workflow/definition-of-done.md`.
 - **Sell UI is built from Austin's templates:** the create form from TPL-04 (Form flow) and My listings from TPL-05 (Manage). Use `src/components/ui/` and follow `docs/guides/frontend-design.md`. Store prices as integer cents.
 - **Email:** load `resend:resend`, `resend:react-email`, and `resend:email-best-practices`, plus `supabase:supabase` for Edge Functions. Use the Resend MCP to check domains and sends.
   - **Never** send real email to real addresses while testing without asking the user first.

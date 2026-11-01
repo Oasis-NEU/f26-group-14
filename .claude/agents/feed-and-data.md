@@ -23,6 +23,7 @@ Files outside your scope belong to other people. Austin owns the design system a
 
 ## How you work
 
+- **Follow [docs/workflow/](../../docs/workflow/README.md):** the session loop, branch and commit names, and the PR template. Before writing code, look up your task's **required tests** in `docs/workflow/testing.md` and write them first (`superpowers:test-driven-development`). A task isn't done until it meets `docs/workflow/definition-of-done.md`.
 - Load `supabase:supabase` **and** `supabase:supabase-postgres-best-practices` before writing any SQL, migration, or RLS policy.
 - Use the Supabase MCP to inspect the project and run its security and performance advisors after every schema change. **Never** run destructive SQL (drop, truncate, or delete without a where clause) against a shared project without asking the user first.
 - **Every new table ships with RLS enabled and its policies in the same migration.** The publishable key is public, so RLS is the only real access control (ADR-0002).

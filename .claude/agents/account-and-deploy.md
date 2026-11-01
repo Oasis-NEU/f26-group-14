@@ -22,6 +22,7 @@ Files outside your scope belong to other people. Austin owns the design system a
 
 ## How you work
 
+- **Follow [docs/workflow/](../../docs/workflow/README.md):** the session loop, branch and commit names, and the PR template. Before writing code, look up your task's **required tests** in `docs/workflow/testing.md` and write them first (`superpowers:test-driven-development`). A task isn't done until it meets `docs/workflow/definition-of-done.md`.
 - **Build every page from Austin's templates:** sign-in and Settings from TPL-04 (Form flow), the account section from TPL-05 (Manage), Home from TPL-01 (Landing). Use components from `src/components/ui/` and follow `docs/guides/frontend-design.md`. Load `frontend-design:frontend-design` for UI work. Until a template exists, use plain markup.
 - Use `supabase:supabase` for auth, and `vercel:deploy` / `vercel:env` / `vercel:vercel-cli` for hosting. Use `context7` for current supabase-js and React Router docs.
 - Auth rules are enforced **on the server** (Sanket's hook and RLS). The form check is only for UX. Run `/security-review` on every auth PR.

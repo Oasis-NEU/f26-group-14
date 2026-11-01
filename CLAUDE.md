@@ -71,7 +71,7 @@ npm run build    # production build
 npm run lint     # ESLint
 ```
 
-There's no test runner yet. Check your work with `npm run lint`, `npm run build`, and by opening the app.
+The test runner (Vitest, `npm test`) is being added in task OPS-05. Every feature has required tests listed in [docs/workflow/testing.md](docs/workflow/testing.md); write them first. Until `npm test` exists, check your work with `npm run lint`, `npm run build`, and by opening the app.
 
 ### Layout
 
@@ -106,6 +106,8 @@ Each developer owns one workstream and has a subagent for it. Start a session wi
 | Zane | `sell-email-security` | Sell flow, transactional email, security headers, RLS review, Sentry | Resend, Sentry, Supabase Edge Functions |
 
 UI work: build from Austin's templates and `src/components/ui/`, and read `docs/guides/frontend-design.md` (once it exists) before using the `frontend-design` skill.
+
+**How work flows:** follow [docs/workflow/](docs/workflow/README.md). It covers the session loop, branch and commit names, the PR template (`.github/pull_request_template.md`), review pairs, the definition of done, and the tests required for each task.
 
 **Every Claude session, whether it's a subagent or not, follows these rules:**
 

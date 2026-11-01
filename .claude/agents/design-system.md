@@ -31,6 +31,7 @@ Teammates own their real pages: Adel has sign-in, Settings, Home, and deploys; S
 
 ## How you work
 
+- **Follow [docs/workflow/](../../docs/workflow/README.md):** the session loop, branch and commit names, and the PR template. Before writing code, look up your task's **required tests** in `docs/workflow/testing.md` and write them first (`superpowers:test-driven-development`). A task isn't done until it meets `docs/workflow/definition-of-done.md`.
 - **Load `frontend-design:frontend-design` for every UI task.** Follow its two passes:
   1. Write a compact token plan (color, type, layout, principles) and check it against the Uni Swap brief in `docs/guides/frontend-design.md`. Revise any part that reads like a generic default.
   2. Build, then screenshot and critique.

@@ -19,6 +19,7 @@ This is the team's to-do list, and it changes as we go. Everyone updates it, and
 - **Edit your own section only.** Four people changing the same lines means merge conflicts. Cross-team items go in [Shared](#shared).
 - **Decisions go in ADRs** ([docs/adr/](adr/)). If you picked between real options (a library, a schema shape, where code runs), write an ADR. Small choices don't need one.
 - **Your Claude keeps your log** in [docs/workstreams/](workstreams/). See [Documentation rules](#documentation-rules).
+- **How work gets done** (the session loop, branches and PRs, review pairs, and **the tests each task requires**) is in [docs/workflow/](workflow/README.md).
 
 ---
 
@@ -40,6 +41,7 @@ To start a session in your area, tell Claude: *"Use the `<your-agent>` agent to 
 ```
 Phase 0  Setup (day 1, everyone)
 Phase 1  Foundations: unblocks everyone else
+         OPS-05 test runner FIRST (every task needs tests: docs/workflow/testing.md)
          FE-01..02 learn frontend-design · DS-01..06 tokens+components · MOTION-01..02
          DATA-01..04 schema+RLS · AUTH-01..05 sign-in · OPS-01..04 deploy+CI · MAIL-01..03 email plumbing
 Phase 2  Templates and core flows
@@ -161,6 +163,7 @@ Copy this block into your own log and tick it off there.
 - [ ] **OPS-02** Env vars in Vercel (`vercel:env`) for preview and production
 - [ ] **OPS-03** Create `vercel.json` with the SPA rewrite so deep links like `/feed` don't 404 (Zane adds headers to it in SEC-02)
 - [ ] **OPS-04** GitHub Action that runs `npm ci`, `npm run lint`, and `npm run build` on every PR (add `npm test` once OPS-05 lands)
+- [ ] **OPS-08** Protect `main` on GitHub: require a PR, 1 approval, and green CI; no direct pushes ([branches-and-prs.md](workflow/branches-and-prs.md))
 - [ ] **OPS-07** Production deploy and custom domain
 - [ ] **SEC-08** *(from Austin)* Terms and fraud-prevention page: in-person payment only, meet in public campus spots, never prepay, common scams
 
@@ -182,7 +185,7 @@ Copy this block into your own log and tick it off there.
 - [ ] **DATA-08** Data helpers in `src/lib/listings.js` (`fetchFeed`, `fetchListing`, `createInterest`, …) so pages never write raw queries
 - [ ] **AUTH-03** *(from Austin)* Enforce the school email domain **on the server** with Supabase's "before user created" auth hook (ADR-0005). The check in the form alone isn't enough
 - [ ] **SEC-07** *(from Austin)* Abuse: tune the Supabase auth rate limits; add a "Report listing" button and `reports` flow
-- [ ] **OPS-05** *(from Austin)* Add Vitest and React Testing Library so the team can do TDD. Start with tests for the `src/lib/` helpers
+- [ ] **OPS-05** *(from Austin)* **Do this first: everyone's tests depend on it.** Add Vitest, React Testing Library, user-event, jest-dom, and jsdom; add `npm test` and `npm run test:watch`; add a shared mock for `src/lib/supabase.js`. Follow the stack in [testing.md](workflow/testing.md)
 
 **Feed (`/feed`)**
 - [ ] **FEED-01** Feed grid built from `ListingCard`, with loading, empty, and error states. Copy TPL-02
