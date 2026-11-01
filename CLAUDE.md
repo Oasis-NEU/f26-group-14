@@ -1,4 +1,4 @@
-# CLAUDE.md — Uni Swap (f26-group-14)
+# CLAUDE.md — HuskyExchange (f26-group-14)
 
 Guidance for Claude Code (and humans) working in this repo.
 
@@ -52,7 +52,7 @@ This team shares one set of Claude Code plugins and skills so everyone's Claude 
 
 ## Project
 
-**Uni Swap** is a marketplace where university students buy and sell items with each other: pickup points, item types, move-out timing, and in-person payment. See [README.md](README.md) for the requirements list.
+**HuskyExchange** (renamed from Uni Swap, which is also a crypto product) is a marketplace where Northeastern students buy and sell items with each other. It covers all 14 NEU campuses, campus meetup spots, and in-person payment only (cash, Zelle, Cash App, Venmo). There's no payment processing. Most core features are already built; see "Where things stand" in [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md).
 
 ### Stack
 
@@ -73,12 +73,19 @@ npm run lint     # ESLint
 
 The test runner (Vitest, `npm test`) is being added in task OPS-05. Every feature has required tests listed in [docs/workflow/testing.md](docs/workflow/testing.md); write them first. Until `npm test` exists, check your work with `npm run lint`, `npm run build`, and by opening the app.
 
+- **Test accounts without email:** Supabase dashboard → Authentication → Users → Add user, with "Auto Confirm User" checked. The email must still be `@northeastern.edu`.
+- **Check guest access:** use `curl "$VITE_SUPABASE_URL/rest/v1/listings?select=..." -H "apikey: $VITE_SUPABASE_PUBLISHABLE_KEY"` after `set -a; . ./.env`. Asking for `seller_email` should return 42501 (permission denied).
+- **After any schema change:** run the Supabase security advisors (Supabase MCP `get_advisors`).
+
 ### Layout
 
 - [src/main.jsx](src/main.jsx): entry point
-- [src/App.jsx](src/App.jsx): nav bar plus one `<Route>` per page. To add a page, create it in `src/pages/`, import it here, and add a `<Link>` and a `<Route>`.
-- [src/pages/](src/pages/): `home`, `feed`, `sell`, `settings`, `signin`
+- [src/App.jsx](src/App.jsx): holds the session (`getSession` + `onAuthStateChange`), the nav, and every `<Route>`. Pages that need it get `session` as a prop. To add a page, create it in `src/pages/`, import it here, and add a `<Route>`.
+- **Routes:** public: `/`, `/feed`, `/listing/:id`, `/signin`, `/signup`, `/reset-password`. Login required (wrapped in `RequireAuth`): `/sell`, `/settings`, `/profile/:id`, `/listing/:id/edit`.
+- [src/components/](src/components/): `RequireAuth` (redirects to `/signin` and remembers where you were), `ListingForm` (shared by Sell and Edit), `ListingCard`, `Avatar`, `ChipFilter`, `PriceRangeFilter`, `VerifyCodeForm`
 - [src/lib/supabase.js](src/lib/supabase.js): the one shared Supabase client. Import `supabase` from here; never create a second client.
+- [src/lib/listingOptions.js](src/lib/listingOptions.js): categories, conditions, payment methods, and the 14 campuses with their meetup spots. These names **must match the `check` constraints in `supabase/*.sql`** ([ADR-0010](docs/adr/0010-campuses-and-option-lists-in-code.md)), or inserts fail. Meetup spots aren't constrained.
+- [supabase/](supabase/): the SQL that's live in Supabase, one file per feature (`listings`, `guest_browsing`, `profiles`, `campuses`, `restrict_to_northeastern`, `security_fixes`). These were applied by hand or through the Supabase MCP. They're a record, not auto-run migrations (moving to `supabase/migrations/` is DATA-02).
 - [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md): the team to-do list, with owners and task IDs (`FEED-03`, `SEC-02`, …)
 - [docs/adr/](docs/adr/): Architecture Decision Records. [docs/workstreams/](docs/workstreams/): one log per developer
 - [.claude/agents/](.claude/agents/): one subagent per developer's workstream
@@ -94,6 +101,15 @@ VITE_SUPABASE_PUBLISHABLE_KEY=...
 
 Ask a teammate for the values. Only the publishable (anon) key belongs in the frontend. Never put the service-role key in a `VITE_` variable, because Vite bundles those into the browser.
 
+`VITE_SUPABASE_URL` must end at `.supabase.co`. A `/rest/v1/` suffix breaks auth with "Invalid path specified in request URL". Restart `npm run dev` after editing `.env`.
+
+### Gotchas
+
+- **Guests (the `anon` role) only have column-level grants on `listings` and `profiles`.** Any query a logged-out user can trigger must list columns explicitly. `select('*')` fails for guests, and `seller_email` is never granted to them.
+- **Loading data in `useEffect`:** call `setState` only after an `await`, and use an `ignore` flag in the cleanup (see `src/pages/profile.jsx`). The react-hooks lint rules flag synchronous `setState` in effects.
+- **Auth emails go through custom SMTP**, moving from Gmail to Resend (`mail.huskyexchange.app`). Northeastern's Outlook silently dropped Gmail-sent codes. Until Resend is verified, new sign-ups can't receive their code.
+- **Supabase Auth:** sign-in is email and password, with a 6-digit code to verify the email once ([ADR-0005](docs/adr/0005-auth-school-email-magic-link.md)). "Confirm email" is on and the minimum password length is 8. The Confirm signup and Reset Password templates use `{{ .Token }}` (a code, no links).
+
 ## Project plan, ADRs, and work logs
 
 Each developer owns one workstream and has a subagent for it. Start a session with: *"Use the `<agent>` agent to pick up my next task."*
@@ -102,7 +118,7 @@ Each developer owns one workstream and has a subagent for it. Start a session wi
 |---|---|---|---|
 | Austin | `design-system` | Full-time frontend: design system, 5 page templates (`/templates/*`) everyone copies, motion | frontend-design, Playwright |
 | Adel | `account-and-deploy` | Sign-in, Settings, Home, Vercel deploys, CI | Vercel, Supabase Auth |
-| Sanket | `feed-and-data` | Schema, RLS, storage, Feed, listing detail, auth hook, Vitest | Supabase |
+| Sanket | `feed-and-data` | Schema, RLS, storage, Feed, listing detail, profiles, messaging, auth hook, Vitest | Supabase |
 | Zane | `sell-email-security` | Sell flow, transactional email, security headers, RLS review, Sentry | Resend, Sentry, Supabase Edge Functions |
 
 UI work: build from Austin's templates and `src/components/ui/`, and read `docs/guides/frontend-design.md` (once it exists) before using the `frontend-design` skill.

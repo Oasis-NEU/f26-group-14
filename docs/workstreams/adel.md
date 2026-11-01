@@ -12,7 +12,7 @@ _Next up: OPS-01 (Vercel preview deploys) and AUTH-01, then AUTH-02, AUTH-04, an
 
 ## Open questions / blockers
 
-- _none yet_
+- **Already built by Sanket and merged to `main` (#6), so don't rebuild it:** sign in / sign up / reset password (email + password, a 6-digit code once; AUTH-02), `RequireAuth` with return-after-sign-in (AUTH-05), Settings profile (name, avatar, bio, campus) and change password (SET-01, AUTH-07). Your work there is reviewing ADR-0005 (AUTH-01), restyling onto TPL-04, `useSession` (AUTH-04), and tests (TEST-01). See "Where things stand" in PROJECT_PLAN.md.
 
 ## Log
 

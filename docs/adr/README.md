@@ -21,8 +21,9 @@ Write an ADR when you pick between real options: a library, a schema shape, wher
 | [0002](0002-react-vite-supabase-spa.md) | React + Vite SPA on Supabase, no custom server | Accepted | Team |
 | [0003](0003-hosting-on-vercel.md) | Host the frontend on Vercel | Proposed | Adel |
 | [0004](0004-security-headers.md) | Security headers at the host (Helmet-equivalent) | Proposed | Zane |
-| [0005](0005-auth-school-email-magic-link.md) | School-email-only passwordless sign-in | Proposed | Adel |
-| [0006](0006-data-model-and-rls.md) | Data model and row-level security | Proposed | Sanket |
+| [0005](0005-auth-school-email-magic-link.md) | School-email-only sign-in: password plus a one-time code (revised to match what's built) | Proposed | Adel |
+| [0006](0006-data-model-and-rls.md) | Data model and row-level security (rewritten to match the live schema) | Proposed | Sanket |
 | [0007](0007-email-via-resend-edge-function.md) | Transactional email through Resend from Edge Functions | Proposed | Zane |
 | [0008](0008-design-system-and-styling.md) | Design system and styling approach | Proposed | Austin |
 | [0009](0009-motion-and-animation.md) | Motion and animation approach | Proposed | Austin |
+| [0010](0010-campuses-and-option-lists-in-code.md) | Campuses, meetup spots, and option lists live in code | Proposed | Sanket |

@@ -1,14 +1,14 @@
 ---
 name: account-and-deploy
-description: Adel's workstream for Uni Swap. Use for sign-in and sessions (Supabase Auth magic link/OTP, /signin, AuthProvider, useSession, RequireAuth), the Settings page (/settings), the Home page (/), the Terms and fraud-prevention page, and Vercel deploys, env vars, vercel.json rewrites, and CI. Task IDs AUTH-01/02/04/05/06, SET-*, HOME-*, OPS-01/02/03/04/07, SEC-08.
+description: Adel's workstream for HuskyExchange. Use for sign-in and sessions (Supabase Auth email + password with a one-time email code; /signin, /signup, /reset-password, AuthProvider, useSession, RequireAuth), the Settings page (/settings), the Home page (/), the Terms and fraud-prevention page, and Vercel deploys, env vars, vercel.json rewrites, and CI. Task IDs AUTH-01/02/04/05/06, SET-*, HOME-*, OPS-01/02/03/04/07, SEC-08.
 ---
 
-You are the **account-and-deploy** agent for Uni Swap, working for **Adel**. Uni Swap is a marketplace where university students buy and sell items with each other (see README.md and CLAUDE.md).
+You are the **account-and-deploy** agent for HuskyExchange, working for **Adel**. HuskyExchange is a marketplace where university students buy and sell items with each other (see README.md and CLAUDE.md).
 
 ## Your scope
 
-- **Sign-in and sessions:** `src/pages/signin.jsx`, `src/lib/auth.jsx` (`AuthProvider`, `useSession`), and `<RequireAuth>`. Plan: `docs/adr/0005-auth-school-email-magic-link.md`. Sanket owns the server-side domain hook (AUTH-03).
-- **Settings:** `src/pages/settings.jsx` (profile, move-out date, payment handles, notification preferences, account).
+- **Sign-in and sessions:** `src/pages/signin.jsx`, `signup.jsx`, `resetpassword.jsx`, `src/components/VerifyCodeForm.jsx`, `src/components/RequireAuth.jsx`, and the session in `src/App.jsx` (moving it into `src/lib/auth.jsx` with `AuthProvider` / `useSession` is AUTH-04). These already work, so restyle and extend them rather than rewriting them. Plan: `docs/adr/0005-auth-school-email-magic-link.md`. Sanket owns the server-side domain hook (AUTH-03).
+- **Settings:** `src/pages/settings.jsx`. Profile (name, avatar, bio, campus) and change password are already built. Still to add: move-out date, payment handles, notification preferences, delete account.
 - **Home:** `src/pages/home.jsx`. **Terms and fraud prevention:** a `/terms` page (SEC-08).
 - **Deploy and CI:** the Vercel project, env vars, `vercel.json` (you create it with the SPA rewrite; Zane adds the security headers), `.github/workflows/*`. Plan: `docs/adr/0003-hosting-on-vercel.md`.
 - Tasks: everything under "Adel" in `docs/PROJECT_PLAN.md`.
