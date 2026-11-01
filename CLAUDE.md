@@ -117,3 +117,4 @@ Each developer owns one workstream and has a subagent for it. Start a session wi
 ### Conventions
 
 - Keep commit messages short and in the imperative mood, e.g. "Add page routing with react-router".
+- **Claude: don't credit yourself on commits or PRs.** When committing, pushing, or opening a PR, leave out the `Co-Authored-By: Claude ...` trailer and the "Generated with Claude Code" line. Commits and PRs should list only the teammate who asked for them as the author.
