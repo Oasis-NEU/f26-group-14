@@ -27,6 +27,11 @@ Newest entry first, one per working session or PR. Your Claude writes these and 
 - **Next / blocked on:** ...
 ```
 
+### 2026-11-01 — Existing UI from #6 to fold into the design system
+
+- **Did:** #6 merged Sanket's earlier UI: `Avatar` and `ChipFilter` (now in `src/components/ui/`), `ListingCard`, and about 540 lines of styles in `src/App.css`. DS-04 and DS-05 are ◐.
+- **Next / blocked on:** For DS-02 and DS-03, replace `App.css` with tokens and the app shell, and restyle the existing pages instead of starting from scratch. The app is now called **HuskyExchange**, so use that name in the FE-02 design brief.
+
 ### 2026-11-01 — Reassigned
 
 - **Did:** Moved to full-time frontend. Took over DS-\* from Adel; new FE-\*, MOTION-\*, and TPL-01..05 (five page templates). AUTH/SEC/OPS tickets went to Adel, Sanket, and Zane. Subagent `auth-and-security` was replaced by `design-system`.

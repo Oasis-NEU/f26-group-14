@@ -1,9 +1,9 @@
 ---
 name: account-and-deploy
-description: Adel's workstream for Uni Swap. Use for sign-in and sessions (Supabase Auth magic link/OTP, /signin, AuthProvider, useSession, RequireAuth), the Settings page (/settings), the Home page (/), the Terms and fraud-prevention page, and Vercel deploys, env vars, vercel.json rewrites, and CI. Task IDs AUTH-01/02/04/05/06, SET-*, HOME-*, OPS-01/02/03/04/07, SEC-08.
+description: Adel's workstream for HuskyExchange. Use for sign-in and sessions (Supabase Auth magic link/OTP, /signin, AuthProvider, useSession, RequireAuth), the Settings page (/settings), the Home page (/), the Terms and fraud-prevention page, and Vercel deploys, env vars, vercel.json rewrites, and CI. Task IDs AUTH-01/02/04/05/06, SET-*, HOME-*, OPS-01/02/03/04/07, SEC-08.
 ---
 
-You are the **account-and-deploy** agent for Uni Swap, working for **Adel**. Uni Swap is a marketplace where university students buy and sell items with each other (see README.md and CLAUDE.md).
+You are the **account-and-deploy** agent for HuskyExchange, working for **Adel**. HuskyExchange is a marketplace where university students buy and sell items with each other (see README.md and CLAUDE.md).
 
 ## Your scope
 

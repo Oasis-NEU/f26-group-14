@@ -1,4 +1,4 @@
-# CLAUDE.md — Uni Swap (f26-group-14)
+# CLAUDE.md — HuskyExchange (f26-group-14)
 
 Guidance for Claude Code (and humans) working in this repo.
 
@@ -52,7 +52,7 @@ This team shares one set of Claude Code plugins and skills so everyone's Claude 
 
 ## Project
 
-**Uni Swap** is a marketplace where university students buy and sell items with each other: pickup points, item types, move-out timing, and in-person payment. See [README.md](README.md) for the requirements list.
+**HuskyExchange** is a marketplace where university students buy and sell items with each other: pickup points, item types, move-out timing, and in-person payment. See [README.md](README.md) for the requirements list.
 
 ### Stack
 
@@ -77,8 +77,14 @@ The test runner (Vitest, `npm test`) is being added in task OPS-05. Every featur
 
 - [src/main.jsx](src/main.jsx): entry point
 - [src/App.jsx](src/App.jsx): nav bar plus one `<Route>` per page. To add a page, create it in `src/pages/`, import it here, and add a `<Link>` and a `<Route>`.
-- [src/pages/](src/pages/): `home`, `feed`, `sell`, `settings`, `signin`
+- [src/pages/](src/pages/): one file per route: `home`, `feed`, `listing`, `editlisting`, `sell`, `profile`, `settings`, `signin`, `signup`, `resetpassword`
+- [src/components/](src/components/):
+  - `ui/`: generic building blocks with no app logic (Austin's design system lives here)
+  - `auth/`: `RequireAuth`, `VerifyCodeForm`
+  - `listings/`: `ListingCard`, `ListingForm`, `PriceRangeFilter`
+- [src/lib/](src/lib/): non-UI helpers (`formatPrice`, `listingOptions`, `listingPhotos`, `shrinkImage`). Logic goes here so it can be unit tested
 - [src/lib/supabase.js](src/lib/supabase.js): the one shared Supabase client. Import `supabase` from here; never create a second client.
+- [supabase/migrations/](supabase/migrations/): timestamped schema changes. **Read [supabase/README.md](supabase/README.md) before your first `supabase db push`.** Never edit a migration that's already been applied.
 - [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md): the team to-do list, with owners and task IDs (`FEED-03`, `SEC-02`, …)
 - [docs/adr/](docs/adr/): Architecture Decision Records. [docs/workstreams/](docs/workstreams/): one log per developer
 - [.claude/agents/](.claude/agents/): one subagent per developer's workstream

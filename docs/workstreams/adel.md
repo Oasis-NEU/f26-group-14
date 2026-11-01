@@ -27,6 +27,11 @@ Newest entry first, one per working session or PR. Your Claude writes these and 
 - **Next / blocked on:** ...
 ```
 
+### 2026-11-01 — Sign-in and Settings already partly built (#6)
+
+- **Did:** #6 merged Sanket's earlier work. Sign-in is **email and password** with an emailed signup code (ADR-0005 now records this). `RequireAuth` is done (AUTH-05). Partly built (◐): AUTH-02, AUTH-04, AUTH-06, SET-01, SET-05. Each ◐ note in the plan says what's left.
+- **Next / blocked on:** Extend the existing pages instead of rebuilding them. AUTH-01 is now "confirm we keep passwords", together with Sanket.
+
 ### 2026-11-01 — Reassigned
 
 - **Did:** Design template (DS-\*) moved to Austin. Took over AUTH-01/02/04/05/06, OPS-01/02/03/04/07, and SEC-08 from Austin. Subagent `design-system` was replaced by `account-and-deploy`.

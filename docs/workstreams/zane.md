@@ -27,6 +27,12 @@ Newest entry first, one per working session or PR. Your Claude writes these and 
 - **Next / blocked on:** ...
 ```
 
+### 2026-11-01 — Sell flow already partly built (#6); security audit findings
+
+- **Did:** #6 merged Sanket's earlier work. `ListingForm`, edit, mark sold, delete, and photo shrinking already exist. SELL-01..04 are ◐ partly built, and the plan says what's left.
+- **Security:** an audit of #6 found 5 issues, now tasks DATA-09..12 and AUTH-07 in Sanket's section. The worst: any signed-in user can collect every seller's email through the API. You review the fixes under SEC-04. SEC-04, 05, 06, and 08 are ◐.
+- **Next / blocked on:** MAIL-01/02 and SEC-01 are unchanged. Extend `ListingForm` rather than replacing it.
+
 ### 2026-11-01 — Reassigned
 
 - **Did:** Took over SEC-01..06, SEC-09 (security headers, RLS review, secrets, scan), and OPS-06 (Sentry) from Austin. Subagent `sell-and-email` was renamed to `sell-email-security`.

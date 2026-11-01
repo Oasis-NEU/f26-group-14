@@ -1,9 +1,11 @@
-# Uni Swap: Project Plan
+# HuskyExchange: Project Plan
 
 This is the team's to-do list, and it changes as we go. Everyone updates it, and so does everyone's Claude.
 
 **Team:** Adel · Sanket · Zane · Austin  **Plan created:** 2026-11-01
 
+> **2026-11-01, page-setup merged (#6):** Sanket's earlier work (sign-in, Sell, Feed, listing page, Settings, 2 tables) is on `main`, and the app is now **HuskyExchange**. Tasks it covers are ticked or marked ◐. Security fixes from the audit are DATA-09..12 and AUTH-07.
+>
 > **2026-11-01 reshuffle:** Austin moved to full-time frontend: the design system, five page templates, and motion. Adel's design-template tasks (DS-\*) moved to Austin. Austin's auth, security, and ops tasks were split between Adel, Sanket, and Zane. Task IDs didn't change, and moved tasks say *(from …)*.
 
 ---
@@ -14,6 +16,7 @@ This is the team's to-do list, and it changes as we go. Everyone updates it, and
 - **Statuses:**
   - `- [ ]` not started
   - `- [ ] 🚧 (branch-name)` in progress
+  - `- [ ] ◐` partly built: the note says what exists and what's left. **Extend the existing code; don't rebuild it**
   - `- [x] (#PR)` merged to `main`
 - **Adding work:** put new tasks in your own section with the next free ID. If a task isn't clearly yours, put it in [Backlog](#backlog-unclaimed) and claim it by adding your name.
 - **Edit your own section only.** Four people changing the same lines means merge conflicts. Cross-team items go in [Shared](#shared).
@@ -106,8 +109,8 @@ Copy this block into your own log and tick it off there.
 - [ ] **DS-01** Finalize ADR-0008 (styling approach) and get a 👍 from the team
 - [ ] **DS-02** Design tokens in `src/styles/tokens.css`: colors (light and dark), type scale, spacing, radius, shadows, **motion** (durations and easings). Remove the Vite starter styles
 - [ ] **DS-03** App shell: responsive nav with a mobile menu, page container, footer. This replaces the `|`-separated links in [App.jsx](../src/App.jsx)
-- [ ] **DS-04** Core components in `src/components/ui/`: Button, Input/Textarea/Select, Card, Badge, Avatar, Modal, Drawer, Toast, EmptyState, Spinner/Skeleton
-- [ ] **DS-05** `ListingCard`: photo, title, price vs. retail, pickup point, "moving out soon" badge. Agree on its props with Sanket
+- [ ] ◐ **DS-04** Core components in `src/components/ui/`: Button, Input/Textarea/Select, Card, Badge, Avatar, Modal, Drawer, Toast, EmptyState, Spinner/Skeleton<br>↳ **Built in #6:** `Avatar` and `ChipFilter` in `src/components/ui/`. **Still to do:** every other component.
+- [ ] ◐ **DS-05** `ListingCard`: photo, title, price vs. retail, pickup point, "moving out soon" badge. Agree on its props with Sanket<br>↳ **Built in #6:** `ListingCard` with photo, title, price, campus, and a sold badge. **Still to do:** savings vs. retail, and the moving-out badge.
 - [ ] **DS-06** `/styleguide` page: every component, every state, every motion token
 - [ ] **DS-07** `src/components/ui/README.md`: how to use each component, dos and don'ts, how to add a new one
 - [ ] **DS-08** Accessibility pass: focus rings, labels, contrast, keyboard navigation, `prefers-reduced-motion`
@@ -125,7 +128,7 @@ Copy this block into your own log and tick it off there.
   - photo reorder in the Sell form
 - [ ] **MOTION-05** Performance check: only animate `transform`/`opacity`. Record a Chrome DevTools performance trace at 4x CPU throttle and confirm no dropped frames
 
-**Five page templates.** Each one is a route at `/templates/<name>`, uses real Uni Swap copy and fake data, and is responsive, accessible, and animated.
+**Five page templates.** Each one is a route at `/templates/<name>`, uses real HuskyExchange copy and fake data, and is responsive, accessible, and animated.
 - [ ] **TPL-01 Landing** (signed-out home): a hero that shows real-looking listings, how it works, a sign-in CTA. This page gets the app's **one** orchestrated page-load moment
 - [ ] **TPL-02 Browse**: filter bar (it becomes a drawer on mobile), responsive card grid, skeletons, empty and error states, an infinite-scroll loader
 - [ ] **TPL-03 Detail**: photo gallery, price vs. retail, pickup point, seller payment handles, a sticky "I'm interested" bar on mobile, and the shared-element transition from Browse
@@ -142,17 +145,17 @@ Copy this block into your own log and tick it off there.
 
 **Sign-in and sessions** *(from Austin)*
 - [ ] **AUTH-01** Finalize ADR-0005 (sign-in method and allowed email domains)
-- [ ] **AUTH-02** Sign-in page at `/signin`: magic link or 6-digit OTP through Supabase Auth. Copy TPL-04
-- [ ] **AUTH-04** `AuthProvider` and a `useSession()` hook in `src/lib/auth.jsx`, subscribed to `onAuthStateChange`
-- [ ] **AUTH-05** `<RequireAuth>` guard for `/sell`, `/settings`, and listing actions. Send users back where they were after sign-in
-- [ ] **AUTH-06** Sign out and expired-session handling
+- [ ] ◐ **AUTH-02** Sign-in page at `/signin`: magic link or 6-digit OTP through Supabase Auth. Copy TPL-04<br>↳ **Built in #6:** email and **password** sign-in, plus an emailed code to confirm signup (ADR-0005). **Still to do:** restyle from TPL-04.
+- [ ] ◐ **AUTH-04** `AuthProvider` and a `useSession()` hook in `src/lib/auth.jsx`, subscribed to `onAuthStateChange`<br>↳ **Built in #6:** the session is handled in `App.jsx` and passed down as props. **Still to do:** `AuthProvider` and `useSession()`.
+- [x] (#6) **AUTH-05** `<RequireAuth>` guard for `/sell`, `/settings`, and listing actions. Send users back where they were after sign-in *(The return path drops the query string)*
+- [ ] ◐ **AUTH-06** Sign out and expired-session handling<br>↳ **Built in #6:** sign out in the nav. **Still to do:** expired-session handling.
 
 **Settings page (`/settings`)**
-- [ ] **SET-01** Profile: display name, avatar upload (Supabase Storage), residence hall, grad year
+- [ ] ◐ **SET-01** Profile: display name, avatar upload (Supabase Storage), residence hall, grad year<br>↳ **Built in #6:** name, bio, campus, avatar upload. **Still to do:** residence hall, grad year.
 - [ ] **SET-02** Move-out date. It drives the "moving out soon" urgency badges
 - [ ] **SET-03** Payment handles: Venmo, Zelle, payment link (shown on your listings). **Never ask for card numbers or API keys**
 - [ ] **SET-04** Notification preferences (interest emails, reminders). Zane's emails read these
-- [ ] **SET-05** Account: sign out, delete account
+- [ ] ◐ **SET-05** Account: sign out, delete account<br>↳ **Built in #6:** sign out (in the nav) and password change. **Still to do:** an Account section and delete account.
 
 **Home page (`/`)**
 - [ ] **HOME-01** Signed-out landing, copied from TPL-01
@@ -165,7 +168,7 @@ Copy this block into your own log and tick it off there.
 - [ ] **OPS-04** GitHub Action that runs `npm ci`, `npm run lint`, and `npm run build` on every PR (add `npm test` once OPS-05 lands)
 - [ ] **OPS-08** Protect `main` on GitHub: require a PR, 1 approval, and green CI; no direct pushes ([branches-and-prs.md](workflow/branches-and-prs.md))
 - [ ] **OPS-07** Production deploy and custom domain
-- [ ] **SEC-08** *(from Austin)* Terms and fraud-prevention page: in-person payment only, meet in public campus spots, never prepay, common scams
+- [ ] ◐ **SEC-08** *(from Austin)* Terms and fraud-prevention page: in-person payment only, meet in public campus spots, never prepay, common scams<br>↳ **Built in #6:** "Stay safe" tips on the listing page. **Still to do:** the full Terms page.
 
 ---
 
@@ -176,24 +179,31 @@ Copy this block into your own log and tick it off there.
 
 **Data**
 - [ ] **DATA-01** Finalize ADR-0006 (tables, relationships, RLS approach) with Zane and Austin (SH-01)
-- [ ] **DATA-02** Set up the Supabase CLI in the repo. Migrations go in `supabase/migrations/`: `profiles`, `listings`, `listing_images`, `categories`, `pickup_points`, `residence_halls`, `interests`, `reports`
-- [ ] **DATA-03** RLS on **every** table (see ADR-0006 for the policy matrix). Zane reviews it (SEC-04)
-- [ ] **DATA-04** Trigger that creates a `profiles` row when a user signs up
-- [ ] **DATA-05** Storage bucket `listing-images`: users can only write to their own folder, with size and MIME limits
-- [ ] **DATA-06** Seed data: categories, campus pickup points (buildings, lobbies), residence halls with move-out dates, fake listings for dev
-- [ ] **DATA-07** Indexes for the feed queries (status, category, created_at, pickup_point, gone_by)
+- [ ] ◐ **DATA-02** Set up the Supabase CLI in the repo. Migrations go in `supabase/migrations/`: `profiles`, `listings`, `listing_images`, `categories`, `pickup_points`, `residence_halls`, `interests`, `reports`<br>↳ **Built in #6:** `profiles` and `listings` (6 migrations). **Still to do:** the other tables. Run `migration repair` first (supabase/README.md).
+- [ ] ◐ **DATA-03** RLS on **every** table (see ADR-0006 for the policy matrix). Zane reviews it (SEC-04)<br>↳ **Built in #6:** RLS is on for both tables. **Still to do:** the policies don't match ADR-0006 yet; see DATA-09..12.
+- [x] (#6) **DATA-04** Trigger that creates a `profiles` row when a user signs up
+- [x] (#6) **DATA-05** Storage bucket `listing-photos`: users can only write to their own folder, with size and MIME limits *(The bucket is named `listing-photos`)*
+- [ ] ◐ **DATA-06** Seed data: categories, campus pickup points (buildings, lobbies), residence halls with move-out dates, fake listings for dev<br>↳ **Built in #6:** categories, campuses, and meetup spots hard-coded in `src/lib/listingOptions.js`. **Still to do:** a DB seed, residence halls, fake listings.
+- [ ] ◐ **DATA-07** Indexes for the feed queries (status, category, created_at, pickup_point, gone_by)<br>↳ **Built in #6:** indexes on `(status, created_at)` and `seller_id`. **Still to do:** category, pickup point, gone-by.
 - [ ] **DATA-08** Data helpers in `src/lib/listings.js` (`fetchFeed`, `fetchListing`, `createInterest`, …) so pages never write raw queries
-- [ ] **AUTH-03** *(from Austin)* Enforce the school email domain **on the server** with Supabase's "before user created" auth hook (ADR-0005). The check in the form alone isn't enough
+- [x] (#6) **AUTH-03** *(from Austin)* Enforce the school email domain **on the server** with Supabase's "before user created" auth hook (ADR-0005). The check in the form alone isn't enough *(Confirm the hook is switched on in the dashboard (supabase/README.md))*
 - [ ] **SEC-07** *(from Austin)* Abuse: tune the Supabase auth rate limits; add a "Report listing" button and `reports` flow
 - [ ] **OPS-05** *(from Austin)* **Do this first: everyone's tests depend on it.** Add Vitest, React Testing Library, user-event, jest-dom, and jsdom; add `npm test` and `npm run test:watch`; add a shared mock for `src/lib/supabase.js`. Follow the stack in [testing.md](workflow/testing.md)
 
+**Security fixes from the #6 audit** (do these before launch; Zane reviews them under SEC-04)
+- [ ] **DATA-09** Stop exposing `seller_email` through the API. Any signed-in user can read every listing's email (`using (true)`), and guests are blocked only by column grants. Move contact to the `interests` flow (FEED-06), or serve the email through a function that only signed-in users can call, only for active listings
+- [ ] **DATA-10** Add column grants on `listings` the way `profiles` has them: revoke table-wide insert/update, then grant only the columns users may edit. Right now a seller can set `created_at` and pin a listing to the top of the feed
+- [ ] **DATA-11** Store storage **paths**, not full URLs, in `photo_url` and `avatar_url`, and only accept paths in our own buckets. Cap `meetup_location` length. Right now those columns can point at any URL, including tracking pixels
+- [ ] **DATA-12** Check whether deleting a photo works without a SELECT policy on `listing-photos`. If it doesn't, add the policy so replaced photos don't pile up as orphaned public files
+- [ ] **AUTH-07** Re-check the email domain when a user **changes** their email. The before-user-created hook only runs at signup
+
 **Feed (`/feed`)**
-- [ ] **FEED-01** Feed grid built from `ListingCard`, with loading, empty, and error states. Copy TPL-02
-- [ ] **FEED-02** Filters: category, price range, pickup point, condition, "seller moves out within N days"
+- [ ] ◐ **FEED-01** Feed grid built from `ListingCard`, with loading, empty, and error states. Copy TPL-02<br>↳ **Built in #6:** grid with loading, empty, and error states. **Still to do:** restyle from TPL-02.
+- [ ] ◐ **FEED-02** Filters: category, price range, pickup point, condition, "seller moves out within N days"<br>↳ **Built in #6:** category, price, campus, payment method. **Still to do:** pickup point, condition, moving-out window.
 - [ ] **FEED-03** Search on title and description (Postgres full-text)
 - [ ] **FEED-04** Sort: newest, price, ending soonest
 - [ ] **FEED-05** Pagination or infinite scroll
-- [ ] **FEED-06** Listing detail at `/listings/:id`, copied from TPL-03: photos, price vs. retail, pickup point, availability, the seller's payment handles, and an **"I'm interested"** button that inserts into `interests` (triggers MAIL-05)
+- [ ] ◐ **FEED-06** Listing detail at `/listing/:id`, copied from TPL-03: photos, price vs. retail, pickup point, availability, the seller's payment handles, and an **"I'm interested"** button that inserts into `interests` (triggers MAIL-05)<br>↳ **Built in #6:** detail page at **`/listing/:id`** with one photo and a `mailto:` contact link. **Still to do:** retail price, dates, payment handles, "I'm interested".
 - [ ] **FEED-07** *(stretch)* Realtime: new listings show up without a refresh
 - [ ] **FEED-08** *(stretch)* Save/favorite listings
 
@@ -205,10 +215,10 @@ Copy this block into your own log and tick it off there.
 **Subagent:** `sell-email-security` · **ADRs:** [0004](adr/0004-security-headers.md), [0007](adr/0007-email-via-resend-edge-function.md)
 
 **Sell (`/sell`)**
-- [ ] **SELL-01** Create-listing form, copied from TPL-04: title, description, category, condition, price, original retail price, photos, pickup point, available-from and must-be-gone-by dates, accepted payment methods
-- [ ] **SELL-02** Validation, friendly error messages, and a preview step before publishing
-- [ ] **SELL-03** "My listings" page, copied from TPL-05: edit, mark sold, delete, relist
-- [ ] **SELL-04** Photos: resize and compress in the browser before upload, reorder, remove. Uploads go to the DATA-05 bucket
+- [ ] ◐ **SELL-01** Create-listing form, copied from TPL-04: title, description, category, condition, price, original retail price, photos, pickup point, available-from and must-be-gone-by dates, accepted payment methods<br>↳ **Built in #6:** `ListingForm` with one photo. **Still to do:** retail price, dates, multiple photos.
+- [ ] ◐ **SELL-02** Validation, friendly error messages, and a preview step before publishing<br>↳ **Built in #6:** friendly validation messages. **Still to do:** a preview step.
+- [ ] ◐ **SELL-03** "My listings" page, copied from TPL-05: edit, mark sold, delete, relist<br>↳ **Built in #6:** edit, mark sold, relist, and delete on the listing page; the profile page lists your items. **Still to do:** a My listings page from TPL-05; replace `window.confirm`.
+- [ ] ◐ **SELL-04** Photos: resize and compress in the browser before upload, reorder, remove. Uploads go to the DATA-05 bucket<br>↳ **Built in #6:** resize and compress in `src/lib/shrinkImage.js`. **Still to do:** multiple photos and reorder.
 - [ ] **SELL-05** Auto-expire listings after their gone-by date (pair with Sanket: `pg_cron` or a query filter)
 
 **Email**
@@ -226,9 +236,9 @@ Copy this block into your own log and tick it off there.
 - [ ] **SEC-01** Finalize ADR-0004. Helmet is Express middleware and we have no Express server, so the same headers go in `vercel.json`
 - [ ] **SEC-02** Add the headers to `vercel.json` (after Adel's OPS-03): CSP (Report-Only first), HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `frame-ancestors 'none'`, `Permissions-Policy`, COOP. Check them with securityheaders.com and a Playwright assertion
 - [ ] **SEC-03** If we ever add a Node/Express server (for example, Stripe webhooks), use `helmet()` there. Note it in ADR-0004
-- [ ] **SEC-04** Review every RLS policy Sanket ships. Run the Supabase security advisors. Prove an anon key can't read private data or write anything
-- [ ] **SEC-05** Input safety: no `dangerouslySetInnerHTML` with user content; check upload type and size; cap text lengths
-- [ ] **SEC-06** Secrets hygiene: `.env` and `.remember/` gitignored, GitHub secret scanning on, only the publishable key in `VITE_` variables
+- [ ] ◐ **SEC-04** Review every RLS policy Sanket ships. Run the Supabase security advisors. Prove an anon key can't read private data or write anything<br>↳ **Built in #6:** Supabase advisor run and its findings fixed. **Still to do:** the full RLS review; start with DATA-09..12.
+- [ ] ◐ **SEC-05** Input safety: no `dangerouslySetInnerHTML` with user content; check upload type and size; cap text lengths<br>↳ **Built in #6:** client and bucket size/type limits; no `dangerouslySetInnerHTML`. **Still to do:** length caps (DATA-11).
+- [ ] ◐ **SEC-06** Secrets hygiene: `.env` and `.remember/` gitignored, GitHub secret scanning on, only the publishable key in `VITE_` variables<br>↳ **Built in #6:** `.env` and `.remember/` are ignored; only the publishable key is in `VITE_`. **Still to do:** turn on GitHub secret scanning.
 - [ ] **SEC-09** Run a `claude-security` scan before launch and fix or ticket every finding
 - [ ] **OPS-06** *(from Austin)* Sentry for React: errors and releases, with PII scrubbed. Add Sentry's ingest URL to the CSP
 

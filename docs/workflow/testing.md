@@ -22,7 +22,7 @@
    - Page and component tests mock the **`src/lib/*` helpers** (`vi.mock('../lib/listings')`).
    - Helper tests mock **`src/lib/supabase.js`**.
    - Edge Function tests stub `fetch` to Resend.
-4. **Keep logic out of components.** Money, dates, validation, and query-building go in pure functions in `src/lib/` (for example `format.js`, `validation.js`, `listings.js`). Pure functions are fast and easy to test. Whoever needs a shared helper first writes it, with its tests.
+4. **Keep logic out of components.** Money, dates, validation, and query-building go in pure functions in `src/lib/` (for example `formatPrice.js`, `shrinkImage.js`, and the planned `listings.js`). Pure functions are fast and easy to test. Whoever needs a shared helper first writes it, with its tests.
 5. **Pin time.** Anything that depends on "today" (move-out badges, expiry) uses `vi.useFakeTimers()` and `vi.setSystemTime(...)`.
 6. **No UI snapshot tests.** Austin will keep changing the visuals, so snapshots would break constantly without catching real bugs. Screenshots in the PR cover appearance.
 7. **Bug fix = regression test** that fails without the fix.
@@ -38,7 +38,7 @@ Each task's PR must include the tests in its row. You can add more, but not fewe
 | Task | Required tests |
 |---|---|
 | **DS-04** components | **Every component:** renders with an accessible name; disabled state can't be clicked.<br>**Button:** calls `onClick`.<br>**Input:** the error text is linked through `aria-describedby`.<br>**Modal / Drawer:** opens; Esc closes it; focus moves inside and **returns to the trigger** on close.<br>**Toast:** has `role="status"` and auto-dismisses (fake timers). |
-| **DS-05** `ListingCard` | Shows the price from cents (`1250` → `$12.50`); shows the savings % only when retail is higher than price; shows the "moving out soon" badge only when `gone_by` is within N days (pinned date); links to `/listings/:id`; the image's alt text is the title. |
+| **DS-05** `ListingCard` | Formats the price with `formatPrice` (`12.5` → `$12.50`); shows the savings % only when retail is higher than price; shows the "moving out soon" badge only when `gone_by` is within N days (pinned date); links to `/listings/:id`; the image's alt text is the title. |
 | **MOTION-02** | The reduced-motion hook/switch: returns true when `matchMedia('(prefers-reduced-motion: reduce)')` matches (mocked), and components skip animation classes when it's on. |
 | **TPL-01..05** | **Every template:** renders with exactly one `h1`, and its landmark regions are present.<br>**TPL-02:** the filter controls and the list are present; the empty and error states render.<br>**TPL-04:** the stepper moves forward on valid input and stops on invalid input with an error shown; the review step shows what was entered.<br>**TPL-05:** a row action opens a confirm modal; confirming fires the handler. |
 | **MOTION-03/04/05** | No unit tests. Check these with screenshots and the 4x-throttled performance trace, and attach both to the PR. |
@@ -64,18 +64,20 @@ Each task's PR must include the tests in its row. You can add more, but not fewe
 | **DATA-03** RLS (pgTAP) | **One test per cell of the ADR-0006 policy matrix.** At minimum:<br>• anon can't select listings<br>• user A can't update or delete B's listing<br>• a user can't insert a listing with someone else's `seller_id`<br>• a buyer can't create an interest on their own listing<br>• a seller can read interests on their own listings, and others can't<br>• `reports` can't be read by users<br>• a user can't upload to another user's storage folder |
 | **DATA-04** | pgTAP: inserting an auth user creates a `profiles` row. |
 | **AUTH-03** | pgTAP or a hook test: a non-school email is rejected and a school email is accepted. |
-| **DATA-08** helpers | `fetchFeed` applies each filter (category, price range in cents, pickup point, condition, moving-out-within-N-days), only returns `active` listings, and uses the right sort and page range. Every helper returns the same `{ data, error }` shape. `createInterest` turns a unique violation (`23505`) into a friendly "already interested" error. |
-| **`src/lib/format.js`** | cents → `$12.50`; savings % (no retail, retail lower than price, and zero all handled); `daysUntil` across month boundaries (pinned date). |
+| **DATA-08** helpers | `fetchFeed` applies each filter (category, price range, pickup point, condition, moving-out-within-N-days), only returns `active` listings, and uses the right sort and page range. Every helper returns the same `{ data, error }` shape. `createInterest` turns a unique violation (`23505`) into a friendly "already interested" error. |
+| **`src/lib/formatPrice.js`** (and any date helpers) | `12.5` → `$12.50`, `0` → `$0.00` (or "Free", whichever the UI uses); savings % (no retail, retail lower than price, and zero all handled); `daysUntil` across month boundaries (pinned date). |
 | **FEED-01..05** | Renders cards from the mocked helper. Shows the loading skeleton, then content. Shows the empty state, and the error state with a working retry. Changing a filter or sort calls `fetchFeed` with the new params **and** updates the URL query string. "Load more" fetches the next page. |
 | **FEED-06** | Shows the listing fields and payment handles. "I'm interested" calls `createInterest` once and is disabled afterward. It's hidden on your own listing. A missing ID shows the not-found state. |
 | **SEC-07** | The report button inserts once; a duplicate report shows a friendly message. |
+| **DATA-09..11, AUTH-07** (pgTAP) | Signed-in users can't read another seller's `seller_email` directly. A seller can't set `created_at`, `seller_id`, or `seller_email`. `photo_url` and `avatar_url` reject anything outside our buckets. Changing your email to a non-`@northeastern.edu` address is rejected. |
+| **DATA-12** | Replacing a listing photo removes the old file from `listing-photos` (an integration check against the dev project). |
 | **OPS-05** | A sample test proves jsdom, jest-dom matchers, and the `src/lib/supabase.js` mock all work. |
 
 ### Zane: Sell, email, security
 
 | Task | Required tests |
 |---|---|
-| **SELL-01/02** | `validateListing()`: required fields; price `"12.5"` → `1250` cents; negative or non-numeric prices rejected; retail is optional; `gone_by` must be on or after `available_from`; at most 8 photos. The preview shows the entered values. Submit calls `createListing` with the **exact** payload and shows errors on failure. |
+| **SELL-01/02** | `validateListing()`: required fields; price `"12.5"` → `12.5` with at most 2 decimals; negative or non-numeric prices rejected; retail is optional; `gone_by` must be on or after `available_from`; at most 8 photos. The preview shows the entered values. Submit calls `createListing` with the **exact** payload and shows errors on failure. |
 | **SELL-03** | Mark sold, delete, and relist each go through the confirm modal and call the right helper. |
 | **SELL-04** | `fitWithin(w, h, max)` keeps the aspect ratio. Non-image files and files over 5 MB are rejected. The reorder function moves items correctly. |
 | **SELL-05** | `isExpired(listing, today)` at the boundary: the day before, the day of, and the day after (pinned date). |

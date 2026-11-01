@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { CATEGORIES, PAYMENT_METHODS, CAMPUS_NAMES } from '../lib/listingOptions'
-import ListingCard from '../components/ListingCard'
-import ChipFilter from '../components/ChipFilter'
-import PriceRangeFilter from '../components/PriceRangeFilter'
+import ListingCard from '../components/listings/ListingCard'
+import ChipFilter from '../components/ui/ChipFilter'
+import PriceRangeFilter from '../components/listings/PriceRangeFilter'
 
 const FILTER_DELAY_MS = 300 // wait until the user pauses before asking the database again
 
