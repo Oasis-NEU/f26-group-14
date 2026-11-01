@@ -12,7 +12,7 @@ _Next up: FE-01 (learn the frontend-design skill on a throwaway page), FE-02 (te
 
 ## Open questions / blockers
 
-- _none yet_
+- **Most real pages already exist in `main` (merged in #6)** with temporary styles in `src/App.css`: Feed (campus select, category chips, two-handle price slider, payment chips), listing page, Sell/Edit form, profile, Settings, sign in / sign up. Base the templates on their real content. `ListingCard` and `Avatar` already exist in `src/components/`. Details are in ADR-0008 (current state) and TPL-02..04 in the plan.
 
 ## Log
 

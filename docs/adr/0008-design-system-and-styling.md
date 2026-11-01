@@ -4,6 +4,7 @@
 - **Date:** 2026-11-01
 - **Owner:** Austin
 - **Related tasks:** DS-01 through DS-08
+- **Current state (2026-11-01):** the working pages use temporary global classes in `src/App.css`. Each block is labeled, for example `.form-stack` (all forms), `.listing-grid` / `.listing-card`, `.feed-layout`, `.chip`, `.price-slider`, `.listing-page`, `.profile-header`, `.avatar`. Each page moves onto its template when its owner restyles it; delete the matching block from `App.css` at the same time.
 
 ## Context
 

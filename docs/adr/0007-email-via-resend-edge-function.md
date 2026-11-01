@@ -4,10 +4,11 @@
 - **Date:** 2026-11-01
 - **Owner:** Zane
 - **Related tasks:** MAIL-01 through MAIL-09
+- **Update 2026-11-01:** Supabase Auth already uses custom SMTP, with Gmail as a stopgap. Northeastern's Outlook dropped those emails, so the domain `mail.huskyexchange.app` was added in Resend (DNS pending). Auth templates send a 6-digit code with no links (ADR-0005). The "someone is interested" email becomes "you have a new message" (messaging, MSG-\*).
 
 ## Context
 
-We need to email students: "someone's interested", move-out reminders, a welcome email, and the sign-in links. Resend's API key is a secret. Per ADR-0002, a secret can't go in a `VITE_` variable because Vite builds those into the browser bundle.
+We need to email students: new-message alerts, move-out reminders, a welcome email, and the sign-in codes. Resend's API key is a secret. Per ADR-0002, a secret can't go in a `VITE_` variable because Vite builds those into the browser bundle.
 
 ## Options considered
 
@@ -19,7 +20,7 @@ We need to email students: "someone's interested", move-out reminders, a welcome
 
 - One `send-email` Edge Function. `RESEND_API_KEY` is set with `supabase secrets set` and never stored in the repo.
 - Triggers:
-  - an `interests` insert → seller email (MAIL-05)
+  - a `messages` insert → "you have a new message" email to the other person (MAIL-05)
   - a daily `pg_cron` job → expiry and move-out reminders (MAIL-06)
   - first sign-in → welcome email (MAIL-07)
 - Templates are built with React Email and use Austin's design tokens.
@@ -28,5 +29,5 @@ We need to email students: "someone's interested", move-out reminders, a welcome
 ## Consequences
 
 - Zane needs Supabase access to deploy functions (coordinate with Sanket).
-- The function checks the user's notification preferences (SET-04) before sending, and enforces one email per buyer per listing (MAIL-09).
+- The function checks the user's notification preferences (SET-04) before sending, and doesn't send more than one new-message email per conversation per hour (MAIL-09).
 - A verified sending domain is required before launch. Until then, dev uses Resend's test sender.
