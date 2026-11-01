@@ -11,10 +11,9 @@ This team shares one set of Claude Code plugins and skills so everyone's Claude 
 ### Setup (once per teammate)
 
 1. Pull `main` and open this folder in Claude Code. When it asks whether to trust the folder, say yes.
-2. Claude Code reads `.claude/settings.json` and offers to install the `trailofbits` marketplace and every plugin under `enabledPlugins`. Accept the prompt.
+2. Claude Code reads `.claude/settings.json` and offers to install every plugin under `enabledPlugins`. They all come from Anthropic's official marketplace. Accept the prompt.
    - If no prompt appears, install them yourself:
      ```
-     /plugin marketplace add trailofbits/skills
      /plugin install superpowers@claude-plugins-official
      ```
      Repeat `/plugin install <name>` for each entry in `.claude/settings.json`, or open `/plugin` and pick them from the list.
@@ -48,6 +47,7 @@ This team shares one set of Claude Code plugins and skills so everyone's Claude 
 
 - **archify**: turns architecture, flows, and ERDs into interactive HTML diagrams. Install it from https://github.com/tt-a1i/archify into `~/.claude/skills/archify`.
 - **explanatory-output-style**: Claude explains its choices as it works. Good for learning; install it with `/plugin` if you want it.
+- **Trail of Bits security skills** (`audit-context-building`, `agentic-actions-auditor`): these come from a third-party marketplace, so they're left out of the shared settings on purpose. To install them for yourself only: `/plugin marketplace add trailofbits/skills`, then `/plugin install <name>@trailofbits`.
 - **remember**: keeps memory between sessions. Note that it writes a `.remember/` folder, so don't commit that folder.
 
 ## Project

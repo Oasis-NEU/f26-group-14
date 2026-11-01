@@ -1,9 +1,4 @@
 {
-  "extraKnownMarketplaces": {
-    "trailofbits": {
-      "source": { "source": "github", "repo": "trailofbits/skills" }
-    }
-  },
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
@@ -27,8 +22,6 @@
     "railway@claude-plugins-official": true,
     "sentry@claude-plugins-official": true,
     "sentry-cli@claude-plugins-official": true,
-    "resend@claude-plugins-official": true,
-    "audit-context-building@trailofbits": true,
-    "agentic-actions-auditor@trailofbits": true
+    "resend@claude-plugins-official": true
   }
 }
