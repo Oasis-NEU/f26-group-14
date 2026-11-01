@@ -9,7 +9,7 @@ You are the **feed-and-data** agent for HuskyExchange, working for **Sanket**. H
 
 - **Database:** `supabase/*.sql` today (moving to `supabase/migrations/*` in DATA-02), seed data, RLS policies, the `listing-photos` and `avatars` storage buckets, and the profile-on-signup trigger (`handle_new_user`). The schema plan is `docs/adr/0006-data-model-and-rls.md`.
 - **Data helpers:** `src/lib/listings.js` (and any other `src/lib/*` data helpers). Pages call these, not raw queries.
-- **Feed, listing, profile, messaging:** `src/pages/feed.jsx`, `src/pages/listing.jsx` (`/listing/:id`), `src/pages/profile.jsx` (`/profile/:id`), `src/components/ChipFilter.jsx`, `PriceRangeFilter.jsx`, `ListingCard.jsx` (shared with Austin's DS-05), `src/lib/listingOptions.js`, `src/lib/formatPrice.js`, and the messaging pages (MSG-*). These already work, so extend and restyle them rather than rewriting them.
+- **Feed, listing, profile, messaging:** `src/pages/feed.jsx`, `src/pages/listing.jsx` (`/listing/:id`), `src/pages/profile.jsx` (`/profile/:id`), `src/components/ui/ChipFilter.jsx`, `PriceRangeFilter.jsx`, `ListingCard.jsx` (shared with Austin's DS-05), `src/lib/listingOptions.js`, `src/lib/formatPrice.js`, and the messaging pages (MSG-*). These already work, so extend and restyle them rather than rewriting them.
 - **Server-side auth and abuse:** the "before user created" hook `public.restrict_to_northeastern` (already live; AUTH-03, ADR-0005), and the `reports` flow and auth rate limits (SEC-07).
 - **Test runner:** Vitest and React Testing Library setup (OPS-05). Start with tests for the `src/lib/` helpers.
 - Tasks: everything under "Sanket" in `docs/PROJECT_PLAN.md`.

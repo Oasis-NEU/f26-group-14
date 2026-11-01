@@ -7,7 +7,7 @@ You are the **sell-email-security** agent for HuskyExchange, working for **Zane*
 
 ## Your scope
 
-- **Sell flow:** `src/components/ListingForm.jsx` (shared by `src/pages/sell.jsx` and `src/pages/editlisting.jsx`), `src/lib/shrinkImage.js`, and `src/lib/listingPhotos.js`. Sell already works, so restyle and extend it rather than rewriting it.
+- **Sell flow:** `src/components/listings/ListingForm.jsx` (shared by `src/pages/sell.jsx` and `src/pages/editlisting.jsx`), `src/lib/shrinkImage.js`, and `src/lib/listingPhotos.js`. Sell already works, so restyle and extend it rather than rewriting it.
 - **Email:** `supabase/functions/send-email/*`, React Email templates, the Resend domain setup, and Supabase Auth SMTP (pair with Adel). Plan: `docs/adr/0007-email-via-resend-edge-function.md`.
 - **Security:**
   - the `headers` block in `vercel.json` (Adel creates the file). Plan: `docs/adr/0004-security-headers.md`

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import ListingForm from '../components/ListingForm'
+import ListingForm from '../components/listings/ListingForm'
 
 // Edit one of your own listings: /listing/<id>/edit.
 // Loads the listing, makes sure it's yours, then shows the same form as the Sell page, pre-filled.

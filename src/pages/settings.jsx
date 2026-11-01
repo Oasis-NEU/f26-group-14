@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { shrinkImage } from '../lib/shrinkImage'
 import { CAMPUS_NAMES } from '../lib/listingOptions'
-import Avatar from '../components/Avatar'
+import Avatar from '../components/ui/Avatar'
 
 const AVATAR_SIZE = 400 // profile pictures are shown small, so 400px is plenty
 const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp']

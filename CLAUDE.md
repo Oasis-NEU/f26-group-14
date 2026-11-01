@@ -82,10 +82,13 @@ The test runner (Vitest, `npm test`) is being added in task OPS-05. Every featur
 - [src/main.jsx](src/main.jsx): entry point
 - [src/App.jsx](src/App.jsx): holds the session (`getSession` + `onAuthStateChange`), the nav, and every `<Route>`. Pages that need it get `session` as a prop. To add a page, create it in `src/pages/`, import it here, and add a `<Route>`.
 - **Routes:** public: `/`, `/feed`, `/listing/:id`, `/signin`, `/signup`, `/reset-password`. Login required (wrapped in `RequireAuth`): `/sell`, `/settings`, `/profile/:id`, `/listing/:id/edit`.
-- [src/components/](src/components/): `RequireAuth` (redirects to `/signin` and remembers where you were), `ListingForm` (shared by Sell and Edit), `ListingCard`, `Avatar`, `ChipFilter`, `PriceRangeFilter`, `VerifyCodeForm`
+- [src/components/](src/components/):
+  - `ui/`: generic pieces with no app logic: `Avatar`, `ChipFilter` (Austin's design system grows here)
+  - `auth/`: `RequireAuth` (redirects to `/signin` and remembers where you were), `VerifyCodeForm`
+  - `listings/`: `ListingForm` (shared by Sell and Edit), `ListingCard`, `PriceRangeFilter`
 - [src/lib/supabase.js](src/lib/supabase.js): the one shared Supabase client. Import `supabase` from here; never create a second client.
-- [src/lib/listingOptions.js](src/lib/listingOptions.js): categories, conditions, payment methods, and the 14 campuses with their meetup spots. These names **must match the `check` constraints in `supabase/*.sql`** ([ADR-0010](docs/adr/0010-campuses-and-option-lists-in-code.md)), or inserts fail. Meetup spots aren't constrained.
-- [supabase/](supabase/): the SQL that's live in Supabase, one file per feature (`listings`, `guest_browsing`, `profiles`, `campuses`, `restrict_to_northeastern`, `security_fixes`). These were applied by hand or through the Supabase MCP. They're a record, not auto-run migrations (moving to `supabase/migrations/` is DATA-02).
+- [src/lib/listingOptions.js](src/lib/listingOptions.js): categories, conditions, payment methods, and the 14 campuses with their meetup spots. These names **must match the `check` constraints in `supabase/migrations/*.sql`** ([ADR-0010](docs/adr/0010-campuses-and-option-lists-in-code.md)), or inserts fail. Meetup spots aren't constrained.
+- [supabase/migrations/](supabase/migrations/): the SQL that's live in Supabase, one timestamped file per feature (`restrict_to_northeastern`, `listings`, `guest_browsing`, `profiles`, `campuses`, `security_fixes`). These were applied by hand or through the Supabase MCP, so **read [supabase/README.md](supabase/README.md) before the first `supabase db push`**: the remote history has to be marked as applied first (DATA-02). Never edit an applied migration; add a new one.
 - [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md): the team to-do list, with owners and task IDs (`FEED-03`, `SEC-02`, …)
 - [docs/adr/](docs/adr/): Architecture Decision Records. [docs/workstreams/](docs/workstreams/): one log per developer
 - [.claude/agents/](.claude/agents/): one subagent per developer's workstream

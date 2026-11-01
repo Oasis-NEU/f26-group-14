@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
-import { CATEGORIES, CONDITIONS, PAYMENT_METHODS, CAMPUS_NAMES, getMeetupSpots } from '../lib/listingOptions'
-import { shrinkImage } from '../lib/shrinkImage'
-import { LISTING_PHOTOS_BUCKET, getListingPhotoPath } from '../lib/listingPhotos'
+import { supabase } from '../../lib/supabase'
+import { CATEGORIES, CONDITIONS, PAYMENT_METHODS, CAMPUS_NAMES, getMeetupSpots } from '../../lib/listingOptions'
+import { shrinkImage } from '../../lib/shrinkImage'
+import { LISTING_PHOTOS_BUCKET, getListingPhotoPath } from '../../lib/listingPhotos'
 
 const MAX_PHOTO_SIZE = 5 * 1024 * 1024 // 5 MB, same limit as the storage bucket
 const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp']

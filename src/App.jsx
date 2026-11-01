@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom'
 import { supabase } from './lib/supabase'
-import RequireAuth from './components/RequireAuth'
+import RequireAuth from './components/auth/RequireAuth'
 import Home from './pages/home'
 import Feed from './pages/feed'
 import Sell from './pages/sell'

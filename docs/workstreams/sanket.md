@@ -21,6 +21,14 @@ _Next up: merge the docs-sync PR, then **OPS-05** (Vitest, which everyone's test
 Newest entry first, one per working session or PR. Your Claude writes these and you skim and correct them. Use this format:
 
 ```
+### 2026-11-01 — Folders reorganized; security audit tasks (written by Ryan's Claude)
+
+- **Did:** Moved `supabase/*.sql` into `supabase/migrations/`, with timestamps from the commit that added each file. Moved the components into `src/components/{ui,auth,listings}/`. Only import paths changed. Added `supabase/README.md`.
+- **Decisions:** none. The move is the file half of DATA-02.
+- **Next / blocked on:**
+  - **Before any `supabase db push`, run the `migration repair` command in [supabase/README.md](../../supabase/README.md).** Otherwise the CLI will try to re-run the hand-applied SQL.
+  - Five new tasks from the audit of #6: DATA-14 (signed-in users can read every seller's email), DATA-15 (sellers can set `created_at`), DATA-16 (URL columns accept anything), DATA-17 (no storage SELECT policy), AUTH-09 (email change skips the domain check). Zane reviews them under SEC-04.
+
 ### YYYY-MM-DD — Short title (TASK-IDs)
 - **Did:** what changed, in a sentence or two
 - **Files:** key files touched

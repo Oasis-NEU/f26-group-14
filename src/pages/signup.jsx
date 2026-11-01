@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import VerifyCodeForm from '../components/VerifyCodeForm'
+import VerifyCodeForm from '../components/auth/VerifyCodeForm'
 import { CAMPUS_NAMES } from '../lib/listingOptions'
 
 const MIN_PASSWORD_LENGTH = 8

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import VerifyCodeForm from '../components/VerifyCodeForm'
+import VerifyCodeForm from '../components/auth/VerifyCodeForm'
 
 // Log in with Northeastern email + password.
 // If the account was never verified, offers to email a new code.

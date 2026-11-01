@@ -12,7 +12,7 @@ _Next up: MAIL-01 and MAIL-02 (Resend domain) and SEC-01 (finalize the headers A
 
 ## Open questions / blockers
 
-- **Already built by Sanket and merged to `main` (#6), so don't rebuild it:** the Sell / Edit form (`src/components/ListingForm.jsx`) with campus → meetup spot, a camera / library photo shrunk in the browser, and edit / mark sold / delete on the listing page (SELL-01/03/04). Resend domain `mail.huskyexchange.app` is added and waiting on DNS (MAIL-02); Supabase Auth SMTP currently uses Gmail and needs switching to Resend (MAIL-03). "I'm interested" became in-app messaging, so MAIL-05 is now the new-message email.
+- **Already built by Sanket and merged to `main` (#6), so don't rebuild it:** the Sell / Edit form (`src/components/listings/ListingForm.jsx`) with campus → meetup spot, a camera / library photo shrunk in the browser, and edit / mark sold / delete on the listing page (SELL-01/03/04). Resend domain `mail.huskyexchange.app` is added and waiting on DNS (MAIL-02); Supabase Auth SMTP currently uses Gmail and needs switching to Resend (MAIL-03). "I'm interested" became in-app messaging, so MAIL-05 is now the new-message email.
 
 ## Log
 

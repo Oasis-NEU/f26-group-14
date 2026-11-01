@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { formatPrice } from '../lib/formatPrice'
+import { formatPrice } from '../../lib/formatPrice'
 
 // One listing shown as a small card: photo, title, price, meetup spot.
 // Clicking it opens the listing's own page. Used on profiles now, and the Feed next.

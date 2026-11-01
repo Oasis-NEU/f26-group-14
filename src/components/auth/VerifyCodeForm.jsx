@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../../lib/supabase'
 
 // The "enter the code we emailed you" step. Used by sign up, sign in, and password reset.
 //   email      - the address the code was sent to

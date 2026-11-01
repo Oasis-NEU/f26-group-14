@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { formatPrice } from '../lib/formatPrice'
 import { LISTING_PHOTOS_BUCKET, getListingPhotoPath } from '../lib/listingPhotos'
-import Avatar from '../components/Avatar'
+import Avatar from '../components/ui/Avatar'
 
 // What guests may see (no seller_email, and only the seller's first name).
 const GUEST_COLUMNS =

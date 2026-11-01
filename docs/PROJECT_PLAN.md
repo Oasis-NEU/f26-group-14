@@ -134,8 +134,8 @@ Copy this block into your own log and tick it off there.
 - [ ] **DS-01** Finalize ADR-0008 (styling approach) and get a 👍 from the team
 - [ ] **DS-02** Design tokens in `src/styles/tokens.css`: colors (light and dark), type scale, spacing, radius, shadows, **motion** (durations and easings). Remove the leftover Vite starter styles (`.counter`, `.hero`, …) from `index.css` and `App.css`. Keep the page classes until their pages are restyled (listed in ADR-0008)
 - [ ] **DS-03** App shell: responsive nav with a mobile menu, a HuskyExchange wordmark, page container, footer. This replaces the `|`-separated links in [App.jsx](../src/App.jsx). The nav differs for guests (Sign in, Create account) and members (My profile, Settings, Sign out)
-- [ ] **DS-04** Core components in `src/components/ui/`: Button, Input/Textarea/Select, Card, Badge, Avatar (move `src/components/Avatar.jsx` here), Modal, Drawer, Toast, EmptyState, Spinner/Skeleton
-- [ ] **DS-05** Restyle the existing [`ListingCard`](../src/components/ListingCard.jsx): photo, price, title, campus · meetup spot, seller first name, Sold badge. Price-vs-retail and "moving out soon" badges wait on DATA-12. Agree on its props with Sanket
+- [ ] **DS-04** Core components in `src/components/ui/`: Button, Input/Textarea/Select, Card, Badge, Avatar (move `src/components/ui/Avatar.jsx` here), Modal, Drawer, Toast, EmptyState, Spinner/Skeleton
+- [ ] **DS-05** Restyle the existing [`ListingCard`](../src/components/listings/ListingCard.jsx): photo, price, title, campus · meetup spot, seller first name, Sold badge. Price-vs-retail and "moving out soon" badges wait on DATA-12. Agree on its props with Sanket
 - [ ] **DS-06** `/styleguide` page: every component, every state, every motion token
 - [ ] **DS-07** `src/components/ui/README.md`: how to use each component, dos and don'ts, how to add a new one
 - [ ] **DS-08** Accessibility pass: focus rings, labels, contrast, keyboard navigation, `prefers-reduced-motion`
@@ -172,7 +172,7 @@ Copy this block into your own log and tick it off there.
 
 **Sign-in and sessions** *(from Austin)*
 - [ ] **AUTH-01** Review the revised ADR-0005 (email and password, plus a 6-digit code to verify the email once) and mark it Accepted, or push back
-- [x] **AUTH-02** (#6) `/signin` (email and password), `/signup` (name, campus, email, password → code), `/reset-password` (email → code → new password). The shared code step is `src/components/VerifyCodeForm.jsx`. **Still to do:** restyle onto TPL-04, plus tests (TEST-01)
+- [x] **AUTH-02** (#6) `/signin` (email and password), `/signup` (name, campus, email, password → code), `/reset-password` (email → code → new password). The shared code step is `src/components/auth/VerifyCodeForm.jsx`. **Still to do:** restyle onto TPL-04, plus tests (TEST-01)
 - [ ] **AUTH-04** (partial) The session lives in `App.jsx` and is passed to pages as a prop. **Still to do:** move it into an `AuthProvider` and a `useSession()` hook in `src/lib/auth.jsx`, subscribed to `onAuthStateChange`
 - [x] **AUTH-05** (#6) `<RequireAuth>` guards `/sell`, `/settings`, `/profile/:id`, and `/listing/:id/edit`, and sends users back to where they were after signing in
 - [ ] **AUTH-06** (partial) Sign out works (nav button). **Still to do:** go to `/` after signing out, and handle expired sessions gracefully
@@ -212,7 +212,7 @@ Copy this block into your own log and tick it off there.
 
 **Data**
 - [x] **DATA-01** (#6) ADR-0006 rewritten to match the live schema (`listings`, `profiles`, two buckets, policies). Zane and Austin review it in the docs-sync PR
-- [ ] **DATA-02** (partial) Schema is live and recorded as hand-run SQL in `supabase/*.sql`. **Still to do:** set up the Supabase CLI and turn these into ordered files in `supabase/migrations/`, so a fresh project can be rebuilt in one command
+- [ ] **DATA-02** (partial) Schema is live. The SQL is now ordered, timestamped files in `supabase/migrations/` (moved in the reorganize PR). **Still to do:** set up the Supabase CLI and run `supabase migration repair` so the remote history matches ([supabase/README.md](../supabase/README.md)). Then confirm a fresh project rebuilds in one command
 - [x] **DATA-03** (#6) RLS on every table and bucket: `listings` (guests and members read, guests without `seller_email`; owner writes), `profiles` (guests get `id` and `first_name` only; owner updates 5 columns), `listing-photos` and `avatars` buckets (owner's folder only). **Still to do:** pgTAP tests (TEST-01) and Zane's review (SEC-04)
 - [x] **DATA-04** (#6) Trigger `on_auth_user_created` creates a `profiles` row from the sign-up form (first name, last name, campus)
 - [x] **DATA-05** (#6) Storage bucket **`listing-photos`** (public read, 5 MB, JPEG/PNG/WebP, `<uid>/` folders) plus an **`avatars`** bucket (2 MB)
@@ -224,6 +224,13 @@ Copy this block into your own log and tick it off there.
 - [x] **DATA-11** (#6) Security-advisor fixes: pinned `search_path` on `restrict_to_northeastern`, revoked API access to `rls_auto_enable`, blocked sign-ups with no email
 - [ ] **DATA-12** Plan-era columns that aren't built yet. Add them only if the team still wants them: `retail_price`, `available_from` / `gone_by` (listings), `move_out_date`, `venmo_handle`, `zelle_contact`, `payment_link_url`, notification preferences (profiles). These unblock SET-02/03/04, SELL-05, and MAIL-06
 - [ ] **DATA-13** Multiple photos per listing (`listing_images` table with a `position` order). Pairs with SELL-06
+
+**Security fixes from the audit of #6** (Zane reviews them under SEC-04; each one needs a pgTAP test, see testing.md)
+- [ ] **DATA-14** Signed-in users can read **every seller's email** straight from the API. The `authenticated` select policy on `listings` is `using (true)` with no column grants, unlike `anon`. Either give signed-in users column grants too, or serve the email only through the listing page's contact action
+- [ ] **DATA-15** `listings` has no column-level insert/update grants (`profiles` has them). A seller can set `created_at` to a future date and pin their listing to the top of the feed, which sorts by `created_at desc`. Grant insert/update only on the columns users should set
+- [ ] **DATA-16** `photo_url` and `avatar_url` take any URL, and every viewer's browser loads it, guests included. That allows tracking pixels or files that skip the bucket limits. Store bucket paths, or add a check that the URL is in our own storage. Cap `meetup_location` length too
+- [ ] **DATA-17** `listing-photos` has insert, update, and delete policies but no SELECT policy. Storage `remove()` may need SELECT, so deleting a replaced photo could fail silently and leave orphaned public files. Test it, and add an owner-only SELECT policy if needed
+- [ ] **AUTH-09** The "before user created" hook only runs at signup. Check what stops a user from changing their email to a non-NEU address (`updateUser({ email })`), and block it on the server if nothing does
 - [x] **AUTH-03** *(from Austin)* (#6) The school email domain is enforced **on the server** by the "before user created" hook `public.restrict_to_northeastern`. It rejects non-`@northeastern.edu` emails and missing emails. Checked with direct calls. **Still to do:** a pgTAP test (TEST-01)
 - [ ] **SEC-07** *(from Austin)* Abuse: tune the Supabase auth rate limits; add a "Report listing" button and `reports` flow
 
@@ -253,7 +260,7 @@ Copy this block into your own log and tick it off there.
 **Stack:** Resend MCP (`/mcp` → resend) with `resend:resend`, `resend:react-email`, and `resend:email-best-practices`. Sentry MCP with `sentry:*`. Run `/security-review` and `claude-security` for the security work. Ask Sanket for access to deploy Supabase Edge Functions.
 **Subagent:** `sell-email-security` · **ADRs:** [0004](adr/0004-security-headers.md), [0007](adr/0007-email-via-resend-edge-function.md)
 
-> **Sell is already built** ([`src/components/ListingForm.jsx`](../src/components/ListingForm.jsx), shared by `/sell` and `/listing/:id/edit`). Your open Sell work is restyling onto TPL-04, the extras below, and tests. Email and security are wide open.
+> **Sell is already built** ([`src/components/listings/ListingForm.jsx`](../src/components/listings/ListingForm.jsx), shared by `/sell` and `/listing/:id/edit`). Your open Sell work is restyling onto TPL-04, the extras below, and tests. Email and security are wide open.
 
 **Sell (`/sell`)**
 - [x] **SELL-01** (#6) Create-listing form: title, description, category, condition, price, campus → meetup spot, accepted payment methods, one photo. *(Original retail price and available/gone-by dates wait on DATA-12.)* **Still to do:** restyle onto TPL-04
@@ -278,7 +285,7 @@ Copy this block into your own log and tick it off there.
 - [ ] **SEC-01** Finalize ADR-0004. Helmet is Express middleware and we have no Express server, so the same headers go in `vercel.json`
 - [ ] **SEC-02** Add the headers to `vercel.json` (after Adel's OPS-03): CSP (Report-Only first), HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `frame-ancestors 'none'`, `Permissions-Policy`, COOP. Check them with securityheaders.com and a Playwright assertion. The CSP's `img-src` must allow the Supabase storage URL (listing photos and avatars)
 - [ ] **SEC-03** If we ever add a Node/Express server (for example, Stripe webhooks), use `helmet()` there. Note it in ADR-0004
-- [ ] **SEC-04** (partial) Supabase security advisors run and fixed (DATA-11). Guest access was checked with curl (seller emails are denied). **Still to do:** review every policy in `supabase/*.sql`, and prove an anon key can't read private data or write anything
+- [ ] **SEC-04** (partial) Supabase security advisors run and fixed (DATA-11). Guest access was checked with curl (seller emails are denied). **Still to do:** review every policy in `supabase/migrations/*.sql`, and prove an anon key can't read private data or write anything
 - [ ] **SEC-05** (partial) No `dangerouslySetInnerHTML` anywhere; uploads are checked for type and size; text lengths are capped in the database and the forms. **Still to do:** the ESLint ban and the tests in testing.md
 - [ ] **SEC-06** (partial) `.env` is gitignored and only the publishable key is in `VITE_` variables. **Still to do:** add `.remember/` to `.gitignore` and turn on GitHub secret scanning
 - [ ] **SEC-09** Run a `claude-security` scan before launch and fix or ticket every finding
