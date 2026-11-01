@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Something in Uni Swap is broken
+about: Something in HuskyExchange is broken
 title: "BUG: "
 labels: bug
 ---

@@ -27,7 +27,7 @@ Newest entry first, one per working session or PR. Your Claude writes these and 
 - **Next / blocked on:** ...
 ```
 
-### 2026-11-01 — page-setup merged into `main` (#6); folders reorganized (#7)
+### 2026-11-01 — page-setup merged into `main` (#6); folders reorganized (#8)
 
 - **Did:** Your `page-setup` work is on `main` (#6, merged as a merge commit to keep your history). The reorganize PR moved the SQL into `supabase/migrations/` (timestamps from commit dates) and the components into `src/components/{ui,auth,listings}/`. Done in the plan: AUTH-03, DATA-04, DATA-05. Partly built (◐): DATA-02/03/06/07, FEED-01/02/06.
 - **Decisions:** [ADR-0006](../adr/0006-data-model-and-rls.md) now records the built schema: dollar prices, guest browsing, campuses. [ADR-0005](../adr/0005-auth-school-email-magic-link.md) records the password sign-in.
