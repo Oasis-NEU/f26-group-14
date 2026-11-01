@@ -59,6 +59,8 @@ This team shares one set of Claude Code plugins and skills so everyone's Claude 
 - React 19 + Vite 8, plain JavaScript (`.jsx`, no TypeScript)
 - React Router 7 (`react-router-dom`)
 - Supabase (`@supabase/supabase-js`) for the backend, auth, and database
+- There's no Express server, so Helmet doesn't apply. Security headers go in `vercel.json` ([ADR-0004](docs/adr/0004-security-headers.md)).
+- Secrets (the Resend key, any Stripe secret) live only in Supabase Edge Function secrets, never in `VITE_` variables. RLS is the real access control ([ADR-0002](docs/adr/0002-react-vite-supabase-spa.md)).
 
 ### Commands
 
@@ -77,6 +79,9 @@ There's no test runner yet. Check your work with `npm run lint`, `npm run build`
 - [src/App.jsx](src/App.jsx): nav bar plus one `<Route>` per page. To add a page, create it in `src/pages/`, import it here, and add a `<Link>` and a `<Route>`.
 - [src/pages/](src/pages/): `home`, `feed`, `sell`, `settings`, `signin`
 - [src/lib/supabase.js](src/lib/supabase.js): the one shared Supabase client. Import `supabase` from here; never create a second client.
+- [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md): the team to-do list, with owners and task IDs (`FEED-03`, `SEC-02`, …)
+- [docs/adr/](docs/adr/): Architecture Decision Records. [docs/workstreams/](docs/workstreams/): one log per developer
+- [.claude/agents/](.claude/agents/): one subagent per developer's workstream
 
 ### Environment
 
@@ -88,6 +93,26 @@ VITE_SUPABASE_PUBLISHABLE_KEY=...
 ```
 
 Ask a teammate for the values. Only the publishable (anon) key belongs in the frontend. Never put the service-role key in a `VITE_` variable, because Vite bundles those into the browser.
+
+## Project plan, ADRs, and work logs
+
+Each developer owns one workstream and has a subagent for it. Start a session with: *"Use the `<agent>` agent to pick up my next task."*
+
+| Dev | Subagent | Owns | Stack to connect (`/mcp`) |
+|---|---|---|---|
+| Adel | `design-system` | Design template (everyone copies `/styleguide`), Settings, Home | frontend-design, Playwright |
+| Sanket | `feed-and-data` | Schema, RLS, storage, Feed, listing detail | Supabase |
+| Zane | `sell-and-email` | Sell flow, transactional email | Resend, Supabase Edge Functions |
+| Austin | `auth-and-security` | Auth, security headers, deploys, CI, Sentry | Vercel, Sentry |
+
+**Every Claude session, whether it's a subagent or not, follows these rules:**
+
+1. Before starting, read the dev's section in [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) and the latest entries in `docs/workstreams/<name>.md`.
+2. When starting a task, mark it `🚧 (branch-name)` in the plan. Put the task ID in the branch name and the PR title.
+3. After each session or PR, add a dated entry to the top of that dev's workstream log, using the format in the file.
+4. When you chose between real options, copy [docs/adr/0000-template.md](docs/adr/0000-template.md) to the next number with status Proposed, and add it to the [ADR index](docs/adr/README.md).
+5. When the PR merges, tick `[x] (#PR)`. Put newly found work in the dev's section with the next ID, or in the Backlog.
+6. Edit only your own section of the plan; cross-team items go under Shared.
 
 ### Conventions
 
