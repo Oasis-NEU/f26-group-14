@@ -34,4 +34,5 @@ React 19 + Vite, React Router 7, and Supabase (Postgres, Auth, Storage, row-leve
 - [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md): who's doing what, with task IDs
 - [docs/workflow/](docs/workflow/README.md): branches, PRs, reviews, and required tests
 - [docs/adr/](docs/adr/README.md): why things are built the way they are
+- [docs/ui-redesign/](docs/ui-redesign/README.md): the Canva-based look (gradient, glass panels, fonts) and how it's built
 - [supabase/](supabase/): the SQL that's live in the database
