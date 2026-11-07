@@ -28,6 +28,10 @@ React 19 + Vite, React Router 7, and Supabase (Postgres, Auth, Storage, row-leve
 
 `npm run lint` checks the code; `npm run build` makes a production build.
 
+### Try it without an account
+
+`npm install`, then `npm run demo`, then open http://localhost:5181. This runs the app against a fake Supabase ([scripts/demo.js](scripts/demo.js)) with sample listings, so it needs no `.env`. Sign in with any `@northeastern.edu` email and any password. You can browse, search, post, mark sold, and delete. Everything resets when you stop it. Sign-up, emails, and the database's security rules are **not** simulated, so test those against the real project.
+
 ## For the team
 
 - [CLAUDE.md](CLAUDE.md): setup, conventions, and gotchas (read this first)

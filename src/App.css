@@ -36,9 +36,14 @@
   font-family: var(--mono);
 }
 
+/* A dark red box keeps the message readable on the light bottom of the gradient too. */
 .form-error {
-  color: var(--danger);
   margin-top: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  background: rgba(90, 0, 10, 0.75);
+  color: #ffffff;
 }
 
 /* Hidden on screen but still read out by screen readers. */

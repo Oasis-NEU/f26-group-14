@@ -69,14 +69,26 @@ All of it lives in two files. [`src/index.css`](../../src/index.css) holds the t
   - `src/pages/orders.jsx`
   - `src/lib/hotDeals.js` + test
   - `src/lib/search.js` + test
+  - `scripts/demo.js` (the `npm run demo` script)
+- `package.json`: the `demo` script and the two font packages. `eslint.config.js`: `scripts/` is linted as Node code.
 - `src/pages/home.jsx`, `feed.jsx`, `sell.jsx` and `src/components/listings/ListingCard.jsx`: new layouts. `ListingForm.jsx` only changed one class name.
 
 ## How it was checked
 
 - `npm run lint` and `npm run build` pass.
 - `npx vitest@3.2.4 run`: 9 tests pass (`search.test.js`, `hotDeals.test.js`). Once Sanket's OPS-05 adds `npm test`, they'll run there too.
-- Every page was opened in a browser at 1280px and 375px against a local stand-in for Supabase with sample listings. That covered the landing page, HotDeals, the Item Browser with search and filters, Orders, Sell, a listing page, Sign in, and the account menu. There were no console errors.
+- Every page was opened in a browser at 1280px and 375px using `npm run demo` (below). That covered the landing page, HotDeals, the Item Browser with search and filters, Orders, Sell, a listing page, Sign in, and the account menu. Posting a listing, marking it sold, and seeing it move to Fulfilled all worked. There were no console errors.
 - **Not yet checked against the real Supabase project.** Run `npm run dev` with the team `.env` before merging.
+
+## Demo mode (`npm run demo`)
+
+[`scripts/demo.js`](../../scripts/demo.js) lets anyone see the redesign without the team `.env`:
+
+1. It starts a fake Supabase on port **54321**. This is a plain Node HTTP server that answers the calls the app makes: listings and profiles with filters, password sign-in, and photo uploads. The data is kept in memory.
+2. It sets `VITE_SUPABASE_URL` to that server. Vite gives `VITE_` variables already set in the process priority over `.env`, so even someone with a real `.env` gets the demo data.
+3. It starts Vite on port **5181** with `strictPort`. If something else already uses the port, it stops with an error instead of silently sharing it.
+
+It isn't a replacement for testing against the real database. It doesn't enforce row-level security or column grants (guests can see `seller_email` in demo mode), and sign-up and emails are off.
 
 ## Known limits and follow-ups
 
