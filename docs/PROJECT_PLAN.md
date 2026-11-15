@@ -207,7 +207,7 @@ Copy this block into your own log and tick it off there.
 **Subagent:** `feed-and-data` · **ADRs:** [0006](adr/0006-data-model-and-rls.md), [0010](adr/0010-campuses-and-option-lists-in-code.md)
 
 **Test runner** *(from Austin)*
-- [ ] **OPS-05** **Do this first: everyone's tests depend on it.** Add Vitest, React Testing Library, user-event, jest-dom, and jsdom; add `npm test` and `npm run test:watch`; add a shared mock for `src/lib/supabase.js`. Follow the stack in [testing.md](workflow/testing.md)
+- [ ] 🚧 (ops-05-vitest) **OPS-05** **Do this first: everyone's tests depend on it.** Add Vitest, React Testing Library, user-event, jest-dom, and jsdom; add `npm test` and `npm run test:watch`; add a shared mock for `src/lib/supabase.js`. Follow the stack in [testing.md](workflow/testing.md)
 - [ ] **TEST-01** Backfill the required tests for features already built (merged in #6) (see "Already built: backfill" in [testing.md](workflow/testing.md)). Each owner writes the tests for their area. Sanket writes the shared mock and the first examples
 
 **Data**
@@ -229,7 +229,7 @@ Copy this block into your own log and tick it off there.
 - [ ] **DATA-14** Signed-in users can read **every seller's email** straight from the API. The `authenticated` select policy on `listings` is `using (true)` with no column grants, unlike `anon`. Either give signed-in users column grants too, or serve the email only through the listing page's contact action
 - [ ] **DATA-15** `listings` has no column-level insert/update grants (`profiles` has them). A seller can set `created_at` to a future date and pin their listing to the top of the feed, which sorts by `created_at desc`. Grant insert/update only on the columns users should set
 - [ ] **DATA-16** `photo_url` and `avatar_url` take any URL, and every viewer's browser loads it, guests included. That allows tracking pixels or files that skip the bucket limits. Store bucket paths, or add a check that the URL is in our own storage. Cap `meetup_location` length too
-- [ ] **DATA-17** `listing-photos` has insert, update, and delete policies but no SELECT policy. Storage `remove()` may need SELECT, so deleting a replaced photo could fail silently and leave orphaned public files. Test it, and add an owner-only SELECT policy if needed
+- [ ] 🚧 (data-17-photo-cleanup) **DATA-17** `listing-photos` has insert, update, and delete policies but no SELECT policy. Storage `remove()` may need SELECT, so deleting a replaced photo could fail silently and leave orphaned public files. Test it, and add an owner-only SELECT policy if needed
 - [ ] **AUTH-09** The "before user created" hook only runs at signup. Check what stops a user from changing their email to a non-NEU address (`updateUser({ email })`), and block it on the server if nothing does
 - [x] **AUTH-03** *(from Austin)* (#6) The school email domain is enforced **on the server** by the "before user created" hook `public.restrict_to_northeastern`. It rejects non-`@northeastern.edu` emails and missing emails. Checked with direct calls. **Still to do:** a pgTAP test (TEST-01)
 - [ ] **SEC-07** *(from Austin)* Abuse: tune the Supabase auth rate limits; add a "Report listing" button and `reports` flow
@@ -301,6 +301,7 @@ Copy this block into your own log and tick it off there.
 - [ ] **SH-04** Launch checklist: all P1 tasks done, security scan clean, prod env vars set, rollback plan written
 - [x] **SH-05** (#6) `page-setup` merged to `main`, so everyone builds on the real app
 - [ ] **SH-06** Delete the unused local `server/` Express folder (never committed). ADR-0002 says there's no custom server
+- [ ] 🚧 (sh-07-restore-sign-out) **SH-07** Restore Sign out. The new `TopNav` from d053ca6 (pushed straight to main) dropped the only Sign out button. Also remove the committed `.playwright-mcp/` screenshots and ignore that folder. (Found by Sanket; sign-in is Adel's area)
 
 ---
 

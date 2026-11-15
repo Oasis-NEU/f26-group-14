@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { CATEGORIES, CONDITIONS, PAYMENT_METHODS, CAMPUS_NAMES, getMeetupSpots } from '../../lib/listingOptions'
 import { shrinkImage } from '../../lib/shrinkImage'
-import { LISTING_PHOTOS_BUCKET, getListingPhotoPath } from '../../lib/listingPhotos'
+import { LISTING_PHOTOS_BUCKET, removeListingPhoto } from '../../lib/listingPhotos'
 
 const MAX_PHOTO_SIZE = 5 * 1024 * 1024 // 5 MB, same limit as the storage bucket
 const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp']
@@ -163,7 +163,8 @@ export default function ListingForm({ session, existingListing }) {
     // When editing, if the old photo was replaced or removed, delete the old file from storage.
     const oldPhotoUrl = existingListing?.photo_url
     if (oldPhotoUrl && oldPhotoUrl !== photoUrl) {
-      await supabase.storage.from(LISTING_PHOTOS_BUCKET).remove([getListingPhotoPath(oldPhotoUrl)])
+      const { error: photoError } = await removeListingPhoto(oldPhotoUrl)
+      if (photoError) console.error('Listing saved, but the old photo was not deleted:', photoError.message)
     }
 
     navigate(`/listing/${data.id}`)

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { formatPrice } from '../lib/formatPrice'
-import { LISTING_PHOTOS_BUCKET, getListingPhotoPath } from '../lib/listingPhotos'
+import { removeListingPhoto } from '../lib/listingPhotos'
 import PageShell from '../components/ui/PageShell'
 import TopNav from '../components/ui/TopNav'
 import Button from '../components/ui/Button'
@@ -74,7 +74,9 @@ export default function Listing({ session }) {
       return
     }
     if (listing.photo_url) {
-      await supabase.storage.from(LISTING_PHOTOS_BUCKET).remove([getListingPhotoPath(listing.photo_url)])
+      // The listing is already gone, so don't block the user; just make the leftover file visible.
+      const { error: photoError } = await removeListingPhoto(listing.photo_url)
+      if (photoError) console.error('Listing deleted, but its photo was not:', photoError.message)
     }
     navigate(`/profile/${session.user.id}`)
   }
