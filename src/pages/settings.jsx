@@ -7,6 +7,7 @@ import Avatar from '../components/ui/Avatar'
 import PageShell from '../components/ui/PageShell'
 import TopNav from '../components/ui/TopNav'
 import Button from '../components/ui/Button'
+import SignOutButton from '../components/auth/SignOutButton'
 
 
 
@@ -186,6 +187,10 @@ export default function Settings({ session }) {
 
             <div style={{ marginTop: 40 }}>
               <ChangePasswordForm email={session.user.email} />
+            </div>
+
+            <div style={{ marginTop: 40 }}>
+              <SignOutButton />
             </div>
           </div>
         </>

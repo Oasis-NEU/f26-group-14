@@ -301,6 +301,7 @@ Copy this block into your own log and tick it off there.
 - [ ] **SH-04** Launch checklist: all P1 tasks done, security scan clean, prod env vars set, rollback plan written
 - [x] **SH-05** (#6) `page-setup` merged to `main`, so everyone builds on the real app
 - [ ] **SH-06** Delete the unused local `server/` Express folder (never committed). ADR-0002 says there's no custom server
+- [ ] 🚧 (sh-07-restore-sign-out) **SH-07** Restore Sign out. The new `TopNav` from d053ca6 (pushed straight to main) dropped the only Sign out button. Also remove the committed `.playwright-mcp/` screenshots and ignore that folder. (Found by Sanket; sign-in is Adel's area)
 
 ---
 

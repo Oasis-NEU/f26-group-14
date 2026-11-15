@@ -37,6 +37,14 @@ Newest entry first, one per working session or PR. Your Claude writes these and 
 - **Next / blocked on:** ...
 ```
 
+### 2026-11-15 — Restore Sign out (SH-07)
+
+- **Did:** Austin's direct push to main (d053ca6) replaced the nav with `TopNav`, and Sign out was lost, so nobody could sign out. Added a `SignOutButton` (signs out, then goes to `/signin`; shows the error if it fails) and put it on Settings. Removed the committed `.playwright-mcp/` screenshots and added the folder to `.gitignore`. Also merged the new main into the OPS-05 branch (PR #12) and commented on #10, which now conflicts with main.
+- **Files:** `src/components/auth/SignOutButton.jsx`, `SignOutButton.test.jsx`, `src/pages/settings.jsx`, `.gitignore`
+- **Verified:** both new tests failed first (the button didn't exist; the error test fails when the error handling is removed). `npm test` (8 passed), `npm run lint`, and `npm run build` pass.
+- **Decisions:** none. The button lives on Settings because TopNav is also shown to guests and doesn't know whether you're signed in; Austin can move it into the nav later.
+- **Next / blocked on:** review (Zane; tag Adel). Also unreviewed in d053ca6: about 10 MB of unused PNGs in `src/components/ui/`. Then DATA-17.
+
 ### 2026-11-14 — Vitest test runner (OPS-05)
 
 - **Did:** Added Vitest 5, React Testing Library, user-event, jest-dom, and jsdom. Added `npm test` and `npm run test:watch`, a setup file (jest-dom checks and cleanup after each test), and a shared fake Supabase client, `createSupabaseMock()`, for tests. A sample test proves the fake browser, the jest-dom checks, and the mock all work. Also reviewed Zane's PR #10 (restyle): tested it against the real project and found the account dropdown is covered by the "Hello" pill on HotDeals (fix requested in the review).
