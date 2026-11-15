@@ -27,6 +27,14 @@ Newest entry first, one per working session or PR. Your Claude writes these and 
 - **Next / blocked on:** ...
 ```
 
+### 2026-11-07 — Restyle the app to the Canva mockups (ui-canva-restyle)
+
+- **Did:** Replaced the leftover Vite starter CSS with the Canva design: page gradient, glass panels, Inter + IBM Plex Mono, a new nav bar. Built the landing and HotDeals home, search and a hidden-by-default filter panel in the Item Browser, and a new `/orders` page.
+- **Files:** `src/index.css`, `src/App.css`, `src/App.jsx`, `src/components/layout/*`, `src/pages/{home,feed,sell,orders}.jsx`, `src/lib/{hotDeals,search}.js`, `docs/ui-redesign/`
+- **Verified:** lint and build pass; 9 Vitest tests pass with `npx vitest@3.2.4 run`. Every page checked in a browser at 1280px and 375px against a local stand-in for Supabase. Not yet run against the real project.
+- **Decisions:** fonts are self-hosted from npm to keep the CSP at `'self'` (see [docs/ui-redesign/README.md](../ui-redesign/README.md))
+- **Next / blocked on:** Austin's review (FE-03); a smarter `pickHotDeals()` rule; SEC-01/02 headers on their own branch
+
 ### 2026-11-01 — Reassigned
 
 - **Did:** Took over SEC-01..06, SEC-09 (security headers, RLS review, secrets, scan), and OPS-06 (Sentry) from Austin. Subagent `sell-and-email` was renamed to `sell-email-security`.

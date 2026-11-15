@@ -5,8 +5,10 @@ import ListingForm from '../components/listings/ListingForm'
 export default function Sell({ session }) {
   return (
     <div>
-      <h1>Sell an item</h1>
-      <ListingForm session={session} />
+      <h1 className="page-title page-title-bold">Sell Items</h1>
+      <div className="glass form-panel">
+        <ListingForm session={session} />
+      </div>
     </div>
   )
 }

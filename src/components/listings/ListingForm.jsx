@@ -301,7 +301,7 @@ export default function ListingForm({ session, existingListing }) {
         </button>
       </form>
 
-      {error && <p>{error}</p>}
+      {error && <p className="form-error">{error}</p>}
     </>
   )
 }
