@@ -37,6 +37,14 @@ Newest entry first, one per working session or PR. Your Claude writes these and 
 - **Next / blocked on:** ...
 ```
 
+### 2026-11-15 — Photos are really deleted now (DATA-17)
+
+- **Did:** Confirmed the bug: as the seller, the database showed **0 of their 3** `listing-photos` files, because the bucket had no SELECT policy. Storage's `remove()` only deletes files you can see, so it deleted nothing and still said "no error". Added an owner-only SELECT policy (applied to the live project). Added `removeListingPhoto()` in `src/lib/listingPhotos.js`, which treats "deleted nothing" as an error. Delete listing and Edit (replacing a photo) now use it and log a console error if the file stays.
+- **Files:** `supabase/migrations/20261115180000_listing_photos_select_policy.sql`, `src/lib/listingPhotos.js`, `src/lib/listingPhotos.test.js`, `src/pages/listing.jsx`, `src/components/listings/ListingForm.jsx`
+- **Verified:** the new tests failed first (the helper didn't exist). `npm test` (12 passed), lint, and build pass. Live check as the seller's role: sees 3 of their files after the policy (0 before); another user sees 0. Security advisors: only the known leaked-password warning.
+- **Decisions:** none (the fix DATA-17 described)
+- **Next / blocked on:** in-browser check that replacing and deleting a photo removes the file. Delete the 2 orphaned files from Oct 31 in the dashboard (Storage → listing-photos; SQL can't delete storage files). Then DATA-14.
+
 ### 2026-11-15 — Restore Sign out (SH-07)
 
 - **Did:** Austin's direct push to main (d053ca6) replaced the nav with `TopNav`, and Sign out was lost, so nobody could sign out. Added a `SignOutButton` (signs out, then goes to `/signin`; shows the error if it fails) and put it on Settings. Removed the committed `.playwright-mcp/` screenshots and added the folder to `.gitignore`. Also merged the new main into the OPS-05 branch (PR #12) and commented on #10, which now conflicts with main.
