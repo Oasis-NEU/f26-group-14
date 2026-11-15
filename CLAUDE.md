@@ -69,9 +69,11 @@ npm install
 npm run dev      # start the dev server
 npm run build    # production build
 npm run lint     # ESLint
+npm test         # run every test once (Vitest)
+npm run test:watch  # re-run tests as you save
 ```
 
-The test runner (Vitest, `npm test`) is being added in task OPS-05. Every feature has required tests listed in [docs/workflow/testing.md](docs/workflow/testing.md); write them first. Until `npm test` exists, check your work with `npm run lint`, `npm run build`, and by opening the app.
+Every feature has required tests listed in [docs/workflow/testing.md](docs/workflow/testing.md); write them first. Tests sit next to the file they test (`formatPrice.js` → `formatPrice.test.js`), run in a fake browser (jsdom), and never call the real Supabase: mock it with `createSupabaseMock()` from [src/test/supabaseMock.js](src/test/supabaseMock.js) (the example is in [src/test/setup.test.jsx](src/test/setup.test.jsx)).
 
 - **Test accounts without email:** Supabase dashboard → Authentication → Users → Add user, with "Auto Confirm User" checked. The email must still be `@northeastern.edu`.
 - **Check guest access:** use `curl "$VITE_SUPABASE_URL/rest/v1/listings?select=..." -H "apikey: $VITE_SUPABASE_PUBLISHABLE_KEY"` after `set -a; . ./.env`. Asking for `seller_email` should return 42501 (permission denied).

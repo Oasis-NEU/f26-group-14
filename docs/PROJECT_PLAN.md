@@ -207,7 +207,7 @@ Copy this block into your own log and tick it off there.
 **Subagent:** `feed-and-data` · **ADRs:** [0006](adr/0006-data-model-and-rls.md), [0010](adr/0010-campuses-and-option-lists-in-code.md)
 
 **Test runner** *(from Austin)*
-- [ ] **OPS-05** **Do this first: everyone's tests depend on it.** Add Vitest, React Testing Library, user-event, jest-dom, and jsdom; add `npm test` and `npm run test:watch`; add a shared mock for `src/lib/supabase.js`. Follow the stack in [testing.md](workflow/testing.md)
+- [ ] 🚧 (ops-05-vitest) **OPS-05** **Do this first: everyone's tests depend on it.** Add Vitest, React Testing Library, user-event, jest-dom, and jsdom; add `npm test` and `npm run test:watch`; add a shared mock for `src/lib/supabase.js`. Follow the stack in [testing.md](workflow/testing.md)
 - [ ] **TEST-01** Backfill the required tests for features already built (merged in #6) (see "Already built: backfill" in [testing.md](workflow/testing.md)). Each owner writes the tests for their area. Sanket writes the shared mock and the first examples
 
 **Data**
@@ -301,6 +301,7 @@ Copy this block into your own log and tick it off there.
 - [ ] **SH-04** Launch checklist: all P1 tasks done, security scan clean, prod env vars set, rollback plan written
 - [x] **SH-05** (#6) `page-setup` merged to `main`, so everyone builds on the real app
 - [ ] **SH-06** Delete the unused local `server/` Express folder (never committed). ADR-0002 says there's no custom server
+- [ ] 🚧 (sh-07-restore-sign-out) **SH-07** Restore Sign out. The new `TopNav` from d053ca6 (pushed straight to main) dropped the only Sign out button. Also remove the committed `.playwright-mcp/` screenshots and ignore that folder. (Found by Sanket; sign-in is Adel's area)
 
 ---
 
