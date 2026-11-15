@@ -594,7 +594,7 @@
   text-transform: uppercase;
 }
 
-.form-stack input:not([type='checkbox']):not([type='file']),
+.form-stack input:not([type='checkbox']):not([type='radio']):not([type='file']),
 .form-stack select,
 .form-stack textarea {
   padding: 10px 14px;
@@ -1075,4 +1075,371 @@
   color: #0a1030;
   font-weight: 700;
   font-family: var(--sans);
+}
+
+/* ============================================================
+   Profile menu (avatar dropdown in the top nav)
+   ============================================================ */
+
+.profile-menu {
+  position: relative;
+}
+
+.profile-menu .profile-circle {
+  transition: box-shadow 0.2s;
+}
+
+.profile-menu .profile-circle:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.profile-menu .profile-circle[aria-expanded='true'] {
+  box-shadow: 0 0 0 3px var(--brand);
+}
+
+.profile-menu__panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 20;
+  min-width: 220px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(10, 22, 60, 0.82);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: var(--glass-shadow);
+  transform-origin: top right;
+  animation: profile-menu-in 0.16s ease-out;
+}
+
+@keyframes profile-menu-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+.profile-menu__who {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px 12px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(180, 210, 255, 0.25);
+}
+
+.profile-menu__name {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 15px;
+  color: #fff;
+}
+
+.profile-menu__email {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-menu__item {
+  display: block;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.profile-menu__item:hover,
+.profile-menu__item:focus-visible {
+  background: rgba(58, 102, 255, 0.4);
+  outline: none;
+}
+
+.profile-menu__item--logout {
+  margin-top: 4px;
+  border-top: 1px solid rgba(180, 210, 255, 0.25);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  color: #ffd27a;
+}
+
+/* ============================================================
+   Hot deals greeting (pill in the hero card's top-right corner)
+   ============================================================ */
+
+.hotdeals-greeting {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+}
+
+/* The nav already shows the avatar, so the pill is just the greeting. */
+.hotdeals-greeting .user-pill__avatar {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .hotdeals-greeting {
+    position: static;
+    margin-bottom: 20px;
+  }
+}
+
+/* ============================================================
+   Sell form + live preview
+   ============================================================ */
+
+.sell-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 32px;
+  align-items: start;
+}
+
+.sell-form {
+  gap: 0;
+}
+
+.sell-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 28px 0;
+  border-bottom: 1px solid rgba(180, 210, 255, 0.22);
+}
+
+.sell-section:first-child {
+  padding-top: 0;
+}
+
+.sell-section__title {
+  font-family: var(--sans);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.sell-section__hint {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 6px;
+}
+
+.sell-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.sell-price {
+  max-width: 220px;
+}
+
+.sell-price__field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-size: 16px;
+  text-transform: none;
+}
+
+.sell-price__field:focus-within {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+}
+
+.form-stack .sell-price__field input:not([type='checkbox']):not([type='radio']):not([type='file']) {
+  flex: 1;
+  min-width: 0;
+  padding-left: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+/* .form-stack fieldset stacks its labels in a column; chips wrap in a row. */
+.form-stack .chip-filter {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sell-form .chip {
+  padding: 6px 14px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.sell-form .chip:hover:not(.chip-selected) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sell-photo {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.form-stack .sell-photo__drop {
+  width: 200px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed rgba(180, 210, 255, 0.6);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.form-stack .sell-photo__drop:hover,
+.form-stack .sell-photo__drop:has(input:focus-visible) {
+  background: rgba(58, 102, 255, 0.18);
+  border-color: #fff;
+}
+
+.sell-photo__drop img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sell-photo__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  color: #fff;
+  padding: 16px;
+}
+
+.sell-photo__empty small {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.sell-photo input[type='file'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.sell-photo__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.form-stack .sell-photo__camera {
+  flex-direction: row;
+  color: #fff;
+  font-size: 11px;
+}
+
+.sell-form .form-message {
+  margin-top: 20px;
+}
+
+.sell-submit {
+  padding-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* The preview sticks beside the form while you scroll it. */
+.sell-preview {
+  position: sticky;
+  top: 24px;
+}
+
+.sell-preview__caption {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.sell-preview .item-card {
+  box-shadow: var(--glass-shadow);
+}
+
+@media (max-width: 860px) {
+  .sell-layout {
+    grid-template-columns: 1fr;
+  }
+
+  /* On phones the preview sits under the form as a last check before posting. */
+  .sell-preview {
+    position: static;
+    max-width: 220px;
+  }
+
+  .sell-row {
+    grid-template-columns: 1fr;
+  }
+
+  .glass--panel.sell-form {
+    padding: 28px 20px;
+  }
+}
+
+/* ============================================================
+   My listings
+   ============================================================ */
+
+.section-heading__count {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 6px;
+}
+
+.my-listing {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.my-listing .item-card {
+  flex: 1;
+}
+
+.my-listing__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.my-listing__actions .btn {
+  flex: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-menu__panel {
+    animation: none;
+  }
 }

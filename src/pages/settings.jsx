@@ -126,7 +126,7 @@ export default function Settings({ session }) {
 
   return (
     <PageShell variant="gradient">
-      <TopNav profileHref={`/profile/${userId}`} />
+      <TopNav session={session} />
       {loading ? (
         <p className="state">Loading...</p>
       ) : (

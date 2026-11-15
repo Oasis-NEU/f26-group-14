@@ -79,11 +79,10 @@ export default function Listing({ session }) {
     navigate(`/profile/${session.user.id}`)
   }
 
-  const profileHref = session ? `/profile/${session.user.id}` : '/signin'
 
   return (
     <PageShell variant="gradient">
-      <TopNav profileHref={profileHref} />
+      <TopNav session={session} />
 
       {!isValidId ? (
         <p className="state">This listing doesn't exist.</p>

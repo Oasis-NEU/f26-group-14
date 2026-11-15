@@ -148,7 +148,7 @@ export default function Feed({ session }) {
 
   return (
     <PageShell variant="gradient">
-      <TopNav profileHref={session ? `/profile/${session.user.id}` : '/signin'} />
+      <TopNav session={session} />
 
       <h1 className="page-title">Item browser</h1>
 

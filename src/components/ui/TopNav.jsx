@@ -1,12 +1,13 @@
 import { Link, NavLink } from 'react-router-dom'
 import ProfileIcon from './ProfileIcon'
+import ProfileMenu from './ProfileMenu'
 
 // Logged-in top nav from screens 3-5: HuskyExchange | HotDeals | Item Browser
 // | Orders | Sell | profile icon. Links are hardcoded here on purpose — the
 // nav shape doesn't change per page, only the active route.
 //
-//   profileHref - where the avatar should go (usually /profile/:id)
-//   avatarUrl   - optional avatar image for the profile circle
+//   session - the Supabase session. Signed in: the avatar opens the account
+//             menu (profile, edit profile, log out). Guest: it links to /signin.
 const NAV_LINKS = [
   { to: '/', label: 'HotDeals' },
   { to: '/feed', label: 'Item Browser' },
@@ -14,7 +15,7 @@ const NAV_LINKS = [
   { to: '/sell', label: 'Sell' },
 ]
 
-export default function TopNav({ profileHref = '/settings', avatarUrl }) {
+export default function TopNav({ session }) {
   return (
     <nav className="topnav">
       <Link to="/" className="topnav__brand">
@@ -37,7 +38,11 @@ export default function TopNav({ profileHref = '/settings', avatarUrl }) {
       </div>
 
       <div className="topnav__right">
-        <ProfileIcon url={avatarUrl} as={Link} to={profileHref} />
+        {session ? (
+          <ProfileMenu session={session} />
+        ) : (
+          <ProfileIcon as={Link} to="/signin" aria-label="Sign in" />
+        )}
       </div>
     </nav>
   )

@@ -27,6 +27,13 @@ Newest entry first, one per working session or PR. Your Claude writes these and 
 - **Next / blocked on:** ...
 ```
 
+### 2026-11-15 — Profile menu, Sell restyle, My listings, HotDeals nav (DS-03 partial)
+- **Did:** Avatar in `TopNav` now opens an account menu (View profile, Edit profile, My listings, Log out); `TopNav` takes `session` instead of `profileHref`. HotDeals gets the top nav, with the HELLO pill moved into the hero card. Sell form restyled into the glass + chip language (single-select chips for category/condition, payment chips, photo drop tile, live feed-card preview); Edit listing shares it. New `/sell/listings` screen lists your listings (For sale / Sold) with Edit and Mark sold / Relist, linked by New listing / My listings tabs.
+- **Files:** `src/components/ui/ProfileMenu.jsx`, `TopNav.jsx`, `src/components/listings/ListingForm.jsx`, `SellTabs.jsx`, `src/pages/mylistings.jsx`, `sell.jsx`, `home.jsx`, `App.jsx`, `App.css`
+- **Verified:** `npm run lint`, `npm run build`; Playwright screenshots at 1280px and 390px using a fake session (layout only, since data calls fail without a real login)
+- **Decisions:** none
+- **Next / blocked on:** check with a real account that cards load on My listings and that posting a listing works. The top nav still overflows at 390px, which hides the avatar menu on phones. That needs the mobile nav from DS-03.
+
 ### 2026-11-01 — Reassigned
 
 - **Did:** Moved to full-time frontend. Took over DS-\* from Adel; new FE-\*, MOTION-\*, and TPL-01..05 (five page templates). AUTH/SEC/OPS tickets went to Adel, Sanket, and Zane. Subagent `auth-and-security` was replaced by `design-system`.

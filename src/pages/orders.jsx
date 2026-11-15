@@ -46,7 +46,7 @@ export default function Orders({ session }) {
 
   return (
     <PageShell variant="gradient">
-      <TopNav profileHref={`/profile/${userId}`} />
+      <TopNav session={session} />
 
       <div className="page-title-row">
         <h1 className="page-title">My Orders</h1>

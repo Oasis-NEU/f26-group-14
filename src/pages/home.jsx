@@ -5,6 +5,7 @@ import { pickHotDeals } from '../lib/hotDeals'
 import { formatPrice } from '../lib/formatPrice'
 import PageShell from '../components/ui/PageShell'
 import TopBar from '../components/ui/TopBar'
+import TopNav from '../components/ui/TopNav'
 import GlassCard from '../components/ui/GlassCard'
 import Button from '../components/ui/Button'
 import UserPill from '../components/ui/UserPill'
@@ -83,13 +84,12 @@ function MemberHotDeals({ session }) {
 
   return (
     <PageShell variant="hero" decorated>
-      <div className="topbar">
-        <Link to={`/profile/${session.user.id}`} style={{ display: 'inline-flex' }}>
-          <UserPill username={username.toUpperCase()} />
-        </Link>
-      </div>
+      <TopNav session={session} />
 
       <GlassCard variant="hero">
+        <div className="hotdeals-greeting">
+          <UserPill username={username.toUpperCase()} />
+        </div>
         <div className="hero-copy">
           <h1 className="hero-title">
             Hot<span className="hero-title__light">Deals</span>

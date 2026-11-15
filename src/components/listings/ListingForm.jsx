@@ -1,9 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { CATEGORIES, CONDITIONS, PAYMENT_METHODS, CAMPUS_NAMES, getMeetupSpots } from '../../lib/listingOptions'
 import { shrinkImage } from '../../lib/shrinkImage'
 import { LISTING_PHOTOS_BUCKET, getListingPhotoPath } from '../../lib/listingPhotos'
+import { formatPrice } from '../../lib/formatPrice'
+import Button from '../ui/Button'
+import ItemCard from '../ui/ItemCard'
 
 const MAX_PHOTO_SIZE = 5 * 1024 * 1024 // 5 MB, same limit as the storage bucket
 const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp']
@@ -171,137 +174,177 @@ export default function ListingForm({ session, existingListing }) {
 
   const shownPhoto = previewUrl || existingPhotoUrl
 
+  const submitLabel = isEditing ? (saving ? 'Saving...' : 'Save changes') : (saving ? 'Posting...' : 'Post listing')
+
   return (
-    <>
-      <form className="form-stack" onSubmit={handleSubmit}>
-        <label>
-          Title
-          <input
-            type="text"
-            maxLength={100}
-            placeholder="e.g. Calculus textbook, mini fridge"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </label>
+    <div className="sell-layout">
+      <form className="glass glass--panel form-stack sell-form" onSubmit={handleSubmit} noValidate>
+        <section className="sell-section">
+          <h2 className="sell-section__title">The item</h2>
 
-        <label>
-          Description
-          <textarea
-            maxLength={2000}
-            placeholder="Details, size, any wear and tear..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </label>
+          <label>
+            Title
+            <input
+              type="text"
+              maxLength={100}
+              placeholder="Calculus textbook, mini fridge..."
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </label>
 
-        <label>
-          Price ($)
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="0.00"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-          />
-        </label>
+          <label>
+            Description
+            <textarea
+              maxLength={2000}
+              placeholder="Size, edition, any wear and tear"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </label>
 
-        <label>
-          Category
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
-            <option value="">Choose a category</option>
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-        </label>
-
-        <label>
-          Condition
-          <select value={condition} onChange={(e) => setCondition(e.target.value)}>
-            <option value="">Choose a condition</option>
-            {CONDITIONS.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-        </label>
-
-        <label>
-          Campus
-          <select value={campus} onChange={(e) => handleCampusChange(e.target.value)}>
-            <option value="">Choose your campus</option>
-            {CAMPUS_NAMES.map((name) => (
-              <option key={name} value={name}>{name}</option>
-            ))}
-          </select>
-        </label>
-
-        <label>
-          Meetup location
-          <select
-            value={meetupLocation}
-            onChange={(e) => setMeetupLocation(e.target.value)}
-            disabled={campus === ''}
-          >
-            <option value="">{campus === '' ? 'Pick a campus first' : 'Choose a spot on campus'}</option>
-            {getMeetupSpots(campus).map((place) => (
-              <option key={place} value={place}>{place}</option>
-            ))}
-          </select>
-        </label>
-
-        <fieldset>
-          <legend>Payment methods you accept</legend>
-          {PAYMENT_METHODS.map((method) => (
-            <label key={method}>
+          <label className="sell-price">
+            Price
+            <span className="sell-price__field">
+              <span aria-hidden="true">$</span>
               <input
-                type="checkbox"
-                checked={paymentMethods.includes(method)}
-                onChange={() => togglePaymentMethod(method)}
+                type="number"
+                min="0"
+                step="0.01"
+                inputMode="decimal"
+                placeholder="0 for free"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
               />
-              {method}
+            </span>
+          </label>
+
+          <ChipChoice legend="Category" options={CATEGORIES} value={category} onChange={setCategory} />
+          <ChipChoice legend="Condition" options={CONDITIONS} value={condition} onChange={setCondition} />
+        </section>
+
+        <section className="sell-section">
+          <h2 className="sell-section__title">Meetup</h2>
+          <div className="sell-row">
+            <label>
+              Campus
+              <select value={campus} onChange={(e) => handleCampusChange(e.target.value)}>
+                <option value="">Choose your campus</option>
+                {CAMPUS_NAMES.map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
             </label>
-          ))}
-        </fieldset>
 
-        <fieldset>
-          <legend>Photo (optional)</legend>
+            <label>
+              Meetup spot
+              <select
+                value={meetupLocation}
+                onChange={(e) => setMeetupLocation(e.target.value)}
+                disabled={campus === ''}
+              >
+                <option value="">{campus === '' ? 'Pick a campus first' : 'Choose a spot on campus'}</option>
+                {getMeetupSpots(campus).map((place) => (
+                  <option key={place} value={place}>{place}</option>
+                ))}
+              </select>
+            </label>
+          </div>
 
-          {/* On phones, capture="environment" opens the back camera directly.
-              On laptops it's ignored, so both buttons just open the file picker. */}
-          <label className="photo-button">
-            {shownPhoto ? 'Take new photo' : 'Take photo'}
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              capture="environment"
-              onChange={handlePhotoChange}
-            />
-          </label>
-          <label className="photo-button">
-            Choose from library
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={handlePhotoChange}
-            />
-          </label>
+          <fieldset className="chip-filter">
+            <legend>Payment you accept</legend>
+            {PAYMENT_METHODS.map((method) => (
+              <label key={method} className={paymentMethods.includes(method) ? 'chip chip-selected' : 'chip'}>
+                <input
+                  type="checkbox"
+                  checked={paymentMethods.includes(method)}
+                  onChange={() => togglePaymentMethod(method)}
+                />
+                {method}
+              </label>
+            ))}
+          </fieldset>
+          <p className="form-help">Payment happens in person when you meet. HuskyExchange never handles money.</p>
+        </section>
 
-          {shownPhoto && (
-            <div>
-              <img className="photo-preview" src={shownPhoto} alt="Your listing photo" />
-              <button type="button" onClick={handleRemovePhoto}>Remove photo</button>
+        <section className="sell-section">
+          <h2 className="sell-section__title">Photo <span className="sell-section__hint">optional</span></h2>
+
+          <div className="sell-photo">
+            <label className="sell-photo__drop">
+              {shownPhoto ? (
+                <img src={shownPhoto} alt="Your listing photo" />
+              ) : (
+                <span className="sell-photo__empty">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                    <circle cx="9" cy="10" r="1.6" />
+                    <path d="M21 16l-5-5-8 8" />
+                  </svg>
+                  Choose a photo
+                  <small>JPEG, PNG, or WebP · up to 5 MB</small>
+                </span>
+              )}
+              <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhotoChange} />
+            </label>
+
+            <div className="sell-photo__actions">
+              {/* On phones, capture="environment" opens the back camera directly.
+                  On laptops it's ignored and just opens the file picker. */}
+              <label className="btn btn--outline btn--sm sell-photo__camera">
+                {shownPhoto ? 'Retake photo' : 'Take photo'}
+                <input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" onChange={handlePhotoChange} />
+              </label>
+              {shownPhoto && (
+                <Button variant="ghost" size="sm" onClick={handleRemovePhoto}>
+                  Remove photo
+                </Button>
+              )}
             </div>
-          )}
-        </fieldset>
+          </div>
+        </section>
 
-        <button type="submit" disabled={saving}>
-          {isEditing ? (saving ? 'Saving...' : 'Save changes') : (saving ? 'Posting...' : 'Post listing')}
-        </button>
+        {error && <p className="form-message" role="alert">{error}</p>}
+
+        <div className="sell-submit">
+          <Button type="submit" size="lg" disabled={saving}>
+            {submitLabel}
+          </Button>
+        </div>
       </form>
 
-      {error && <p>{error}</p>}
-    </>
+      <aside className="sell-preview" aria-label="Preview">
+        <p className="sell-preview__caption">How it shows in the feed</p>
+        <ItemCard
+          title={title.trim() || 'Your item'}
+          price={price === '' ? '' : formatPrice(price)}
+          description={campus ? [campus, meetupLocation].filter(Boolean).join(' · ') : 'Pick a campus and meetup spot'}
+          photoUrl={shownPhoto}
+        />
+      </aside>
+    </div>
+  )
+}
+
+// Single-select version of the feed's filter chips: radio buttons styled as pills,
+// so keyboard arrows and screen readers still treat them as one choice.
+function ChipChoice({ legend, options, value, onChange }) {
+  const name = useId()
+  return (
+    <fieldset className="chip-filter">
+      <legend>{legend}</legend>
+      {options.map((option) => (
+        <label key={option} className={value === option ? 'chip chip-selected' : 'chip'}>
+          <input
+            type="radio"
+            name={name}
+            value={option}
+            checked={value === option}
+            onChange={() => onChange(option)}
+          />
+          {option}
+        </label>
+      ))}
+    </fieldset>
   )
 }

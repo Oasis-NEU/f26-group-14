@@ -35,7 +35,7 @@ export default function EditListing({ session }) {
 
   return (
     <PageShell variant="deep">
-      <TopNav profileHref={`/profile/${session.user.id}`} />
+      <TopNav session={session} />
 
       {loading ? (
         <p className="state">Loading...</p>
@@ -51,9 +51,7 @@ export default function EditListing({ session }) {
             <Link to={`/listing/${listing.id}`} className="auth-footer">← Back to listing</Link>
           </p>
           <h1 className="page-title">Edit listing</h1>
-          <div style={{ marginTop: 24, maxWidth: 560 }}>
-            <ListingForm session={session} existingListing={listing} />
-          </div>
+          <ListingForm session={session} existingListing={listing} />
         </>
       )}
     </PageShell>

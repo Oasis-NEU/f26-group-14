@@ -5,6 +5,7 @@ import RequireAuth from './components/auth/RequireAuth'
 import Home from './pages/home'
 import Feed from './pages/feed'
 import Sell from './pages/sell'
+import MyListings from './pages/mylistings'
 import Orders from './pages/orders'
 import Settings from './pages/settings'
 import SignIn from './pages/signin'
@@ -50,6 +51,11 @@ function App() {
       <Route path="/sell" element={
         <RequireAuth session={session} loading={loading}>
           <Sell session={session} />
+        </RequireAuth>
+      } />
+      <Route path="/sell/listings" element={
+        <RequireAuth session={session} loading={loading}>
+          <MyListings session={session} />
         </RequireAuth>
       } />
       <Route path="/settings" element={

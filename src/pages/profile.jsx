@@ -59,7 +59,7 @@ export default function Profile({ session }) {
 
   return (
     <PageShell variant="gradient">
-      <TopNav profileHref={`/profile/${session.user.id}`} />
+      <TopNav session={session} />
 
       {loading ? (
         <p className="state">Loading...</p>
