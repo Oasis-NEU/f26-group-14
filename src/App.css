@@ -93,7 +93,8 @@
   margin: 0 auto;
   padding: 24px 24px 8px;
   position: relative;
-  z-index: 2;
+  /* Above page content (e.g. .hello-pill at z-index 2) so the account menu isn't covered. */
+  z-index: 10;
 }
 
 .site-header-landing {
