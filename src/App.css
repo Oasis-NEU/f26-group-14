@@ -1,344 +1,875 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
+/* HuskyExchange layout + component styles.
+   Pages compose pre-styled primitives from src/components/ui/ and avoid
+   writing bespoke CSS. The screenshots in src/components/ui/*.png are the
+   source of truth for every visual choice here. */
 
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-}
+/* ============================================================
+   Page shells
+   ============================================================ */
 
-.hero {
+.page-shell {
+  min-height: 100vh;
+  width: 100%;
   position: relative;
+  overflow-x: hidden;
+}
 
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
+/* Landing / Hot deals: radial blue glow on a near-black background. */
+.page-shell--hero {
+  background:
+    radial-gradient(ellipse 60% 70% at 50% 45%, #2d5bd0 0%, #122a66 35%, #05081a 75%, #000 100%);
+}
 
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
+/* Interior pages: dark top fading into pale sky blue at the bottom. */
+.page-shell--gradient {
+  background: linear-gradient(180deg, #000 0%, #071233 18%, #1f4bc0 55%, #78a7dd 85%, #c7deef 100%);
+}
 
-  .framework,
-  .vite {
-    position: absolute;
-  }
+/* Sell page: more dramatic dark-to-blue fade. */
+.page-shell--deep {
+  background: linear-gradient(180deg, #000 0%, #04091e 25%, #164bb7 70%, #78a7dd 100%);
+}
 
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
+.page-shell__content {
+  position: relative;
+  z-index: 1;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 24px 32px 80px;
+}
 
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
+.page-shell__ring {
+  position: absolute;
+  width: 220px;
+  opacity: 0.85;
+  pointer-events: none;
+  user-select: none;
+}
+
+.page-shell__ring--top-right {
+  top: -40px;
+  right: -40px;
+  transform: rotate(18deg);
+}
+
+.page-shell__ring--bottom-left {
+  bottom: -40px;
+  left: -40px;
+  transform: rotate(-30deg);
+}
+
+/* ============================================================
+   Navigation
+   ============================================================ */
+
+.topnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0 28px;
+  gap: 24px;
+}
+
+.topnav__brand {
+  font-family: var(--sans);
+  font-size: 18px;
+  font-weight: 400;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.topnav__brand strong {
+  font-weight: 800;
+}
+
+.topnav__links {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* + 12px side padding on each link keeps ~28px between labels */
+  flex: 1;
+  margin-left: 20px;
+}
+
+/* Hover/focus: the label lifts slightly and a soft blue gradient pill fades
+   in behind it. The gradient lives on ::before so it can fade via opacity
+   (gradients themselves can't be transitioned). */
+.topnav__link {
+  position: relative;
+  isolation: isolate;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-family: var(--sans);
+  font-size: 15px;
+  color: #fff;
+  opacity: 0.95;
+  transition: opacity 0.2s, translate 0.25s ease-out;
+}
+
+.topnav__link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(58, 102, 255, 0.45), rgba(167, 198, 236, 0.16));
+  box-shadow: 0 6px 18px rgba(31, 79, 255, 0.25);
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+}
+
+.topnav__link:hover,
+.topnav__link:focus-visible {
+  opacity: 1;
+  translate: 0 -2px;
+}
+
+.topnav__link:hover::before,
+.topnav__link:focus-visible::before {
+  opacity: 1;
+}
+
+.topnav__link:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.topnav__link--active {
+  font-weight: 700;
+}
+
+.topnav__right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Minimal bar (landing page): just the LOGIN button on the right. */
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 24px 0;
+}
+
+/* "Floating" elements: the Login button and the sign-in card drift gently
+   above the background. Uses the standalone `translate` property so it
+   composes with any `transform` (e.g. the button's press-down). The card
+   runs on a delay so the two don't bob in lockstep. */
+@keyframes float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -6px; }
+}
+
+.topbar .btn {
+  box-shadow: 0 10px 28px rgba(31, 79, 255, 0.35), 0 2px 6px rgba(0, 0, 0, 0.3);
+  animation: float 6s ease-in-out infinite;
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  background: transparent;
+  color: #fff;
+  transition: background 0.15s, border-color 0.15s, transform 0.05s;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: var(--brand);
+  border-color: var(--brand);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: var(--brand-hover);
+  border-color: var(--brand-hover);
+}
+
+.btn--outline {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.btn--outline:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: transparent;
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn--lg {
+  font-size: 14px;
+  padding: 12px 28px;
+}
+
+.btn--sm {
+  font-size: 11px;
+  padding: 6px 12px;
+}
+
+/* ============================================================
+   Glass card
+   ============================================================ */
+
+.glass {
+  position: relative;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: var(--glass-shadow);
+  overflow: hidden;
+}
+
+.glass--hero {
+  padding: 56px 56px 40px;
+}
+
+.glass--panel {
+  padding: 40px 48px 32px;
+}
+
+.glass--card {
+  padding: 20px;
+}
+
+/* Hero copy inside the big glass panel. */
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: #fff;
+  margin: 10px 0 28px;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  font-family: var(--sans);
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+/* One-word-bold wordmark style, matching the nav brand (Husky<strong>Exchange</strong>):
+   wrap the regular-weight word in this span. */
+.hero-title__light {
+  font-weight: 400;
+}
+
+.hero-title--split span:last-child {
+  font-weight: 800;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* ============================================================
+   User pill (Avatar + "HELLO {USERNAME}")
+   ============================================================ */
+
+.user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-pill__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0a1030;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+}
+
+.user-pill__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-pill__label {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  padding: 10px 18px;
+  background: var(--brand);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+}
+
+/* Profile icon button in the top nav. */
+.profile-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #fff;
+  color: #0a1030;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  overflow: hidden;
+}
+
+.profile-circle svg {
+  width: 100%;
+  height: 100%;
+}
+
+.profile-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ============================================================
+   Search bar
+   ============================================================ */
+
+.searchbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 8px 0 28px;
+}
+
+.searchbar__field {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: #92b7eb;
+  color: #0a1030;
+  border: 1px solid #1f4fff;
+  border-radius: var(--radius-pill);
+}
+
+.searchbar__field svg {
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.searchbar__input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #0a1030;
+  font-family: var(--mono);
+  font-size: 14px;
+}
+
+.searchbar__input::placeholder {
+  color: rgba(10, 16, 48, 0.6);
+}
+
+.searchbar__filter {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.searchbar__filter:hover {
+  opacity: 0.85;
+}
+
+/* ============================================================
+   Listing grid + card
+   ============================================================ */
+
+.page-title {
+  font-family: var(--sans);
+  font-size: 48px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin: 0 0 24px;
+}
+
+.page-title-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.page-title-row .page-title {
+  margin: 0;
+}
+
+.section-heading {
+  font-family: var(--sans);
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  margin: 32px 0 16px;
+}
+
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+@media (max-width: 720px) {
+  .item-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
   }
 }
 
-#center {
+.item-card {
   display: flex;
   flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
+  gap: 14px;
+  padding: 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #fff;
+  text-decoration: none;
+  min-height: 300px;
 }
 
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
+.item-card:hover {
+  background: rgba(160, 200, 250, 0.35);
 }
 
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
+.item-card__title {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
-#next-steps ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
+.item-card__meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.4;
 }
 
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
-}
-
-.ticks {
-  position: relative;
+.item-card__photo {
+  margin-top: auto;
+  aspect-ratio: 1;
   width: 100%;
+  background: #cfe8f4;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
+.item-card__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-card__sold {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  margin-left: 8px;
+}
+
+/* ============================================================
+   Orders toggle
+   ============================================================ */
+
+.orders-toggle {
+  display: flex;
+  gap: 14px;
+}
+
+/* ============================================================
+   Forms (sign in, sign up, settings, sell listing)
+   ============================================================ */
+
+.form-card {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 32px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: var(--glass-shadow);
+  animation: float 6s ease-in-out -3s infinite;
+}
+
+/* Declared after both floating rules so it wins the cascade. */
+@media (prefers-reduced-motion: reduce) {
+  .topbar .btn,
+  .form-card {
+    animation: none;
   }
 
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
+  .topnav__link:hover,
+  .topnav__link:focus-visible {
+    translate: none;
   }
 }
 
-/* Forms (Sell, Sign up, Settings...): put each field on its own line. Full styling comes later. */
-.form-stack label,
-.form-stack fieldset {
-  display: block;
-  margin-bottom: 12px;
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.form-stack label > input:not([type='checkbox']),
+.form-stack label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.form-stack input:not([type='checkbox']):not([type='file']),
 .form-stack select,
 .form-stack textarea {
-  display: block;
-  width: 100%;
-  max-width: 400px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 14px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.form-stack textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.form-stack input:focus,
+.form-stack select:focus,
+.form-stack textarea:focus {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+}
+
+.form-stack fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-stack legend {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
 }
 
 .form-stack fieldset label {
-  display: inline-block;
-  margin-right: 12px;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  text-transform: none;
+  letter-spacing: 0;
+  color: #fff;
+  font-size: 14px;
 }
 
-/* Photo buttons: hide the real file input and make its label look like a button. */
-.form-stack .photo-button {
+.form-message {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: #ffd27a;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-sm);
+}
+
+.form-help {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.auth-footer {
+  margin-top: 20px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.auth-footer a {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.photo-button {
   display: inline-block;
   margin-right: 8px;
-  padding: 6px 12px;
-  border: 1px solid currentColor;
-  border-radius: 6px;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
-.form-stack .photo-button input[type='file'] {
+.photo-button input[type='file'] {
   display: none;
 }
 
 .photo-preview {
   display: block;
   max-width: 240px;
-  max-height: 240px;
-  margin: 12px 0 8px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
+  margin-top: 10px;
 }
 
-/* Round profile pictures (see components/Avatar.jsx). */
-.avatar {
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-}
+/* ============================================================
+   Profile / listing / misc
+   ============================================================ */
 
-.avatar-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--accent-bg, #e5e7eb);
-  color: var(--accent, #374151);
-  font-weight: bold;
-}
-
-/* Profile page */
 .profile-header {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
+  margin-bottom: 16px;
 }
 
 .profile-bio {
-  white-space: pre-wrap; /* keep the line breaks people type in their bio */
-  max-width: 600px;
+  white-space: pre-wrap;
+  max-width: 620px;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 13px;
 }
 
-/* Grid of listing cards: as many 180px+ columns as fit, so it works on phones and laptops. */
-.listing-grid {
+.listing-page {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 16px;
-}
-
-.listing-card {
-  display: block;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  overflow: hidden;
-  color: inherit;
-  text-decoration: none;
-}
-
-.listing-card img,
-.listing-card-no-photo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  background: #f3f4f6;
-  color: #6b7280;
-}
-
-.listing-card-info {
-  padding: 8px;
-}
-
-.sold-badge {
-  margin-left: 8px;
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: #6b7280;
-  color: white;
-  font-size: 12px;
-}
-
-/* Feed: filters on the left, listings on the right. Stacks into one column on phones. */
-.feed-layout {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 40px;
   align-items: start;
 }
 
-@media (max-width: 700px) {
-  .feed-layout {
+@media (max-width: 760px) {
+  .listing-page {
     grid-template-columns: 1fr;
   }
 }
 
-.feed-filters summary {
-  cursor: pointer;
-  font-weight: bold;
-  margin-bottom: 8px;
+.listing-photo {
+  aspect-ratio: 1;
+  background: #cfe8f4;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
-.feed-filters fieldset {
-  border: none;
-  padding: 0;
-  margin: 0 0 16px;
+.listing-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.feed-filters legend {
-  font-weight: bold;
-  margin-bottom: 6px;
+.listing-price {
+  font-family: var(--sans);
+  font-size: 32px;
+  font-weight: 800;
+  margin: 8px 0 16px;
 }
 
-.listing-card-seller {
-  display: block;
-  color: #6b7280;
+.listing-facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 16px;
+  margin: 16px 0;
+  font-family: var(--mono);
+  font-size: 13px;
 }
 
-/* Chips: the real checkbox is hidden but still focusable; the label is styled as a pill. */
+.listing-facts dt {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+  align-self: center;
+}
+
+.listing-facts dd {
+  margin: 0;
+  color: #fff;
+}
+
+.listing-description {
+  white-space: pre-wrap;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 14px;
+  margin: 16px 0;
+}
+
+.listing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.safety-tips {
+  padding: 16px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.2);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.safety-tips ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+/* ============================================================
+   Hot deals grid (home for logged-in users)
+   ============================================================ */
+
+.hotdeals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 40px;
+}
+
+@media (max-width: 720px) {
+  .hotdeals-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Centered loading / empty state */
+.state {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 40px 0;
+}
+
+/* Hero copy block inside the glass panel */
+.hero-copy {
+  max-width: 520px;
+}
+
+.hero-copy p {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: #fff;
+  margin: 6px 0;
+}
+
+.hero-copy .hero-title {
+  margin-bottom: 20px;
+}
+
+.hero-copy .hero-actions {
+  margin-top: 28px;
+}
+
+/* Filter chips */
+.chip-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
 .chip {
   display: inline-block;
-  margin: 0 6px 6px 0;
-  padding: 4px 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 999px;
+  padding: 4px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-pill);
   cursor: pointer;
   user-select: none;
+  font-family: var(--mono);
+  font-size: 12px;
 }
 
 .chip input {
@@ -348,13 +879,84 @@
 }
 
 .chip-selected {
-  background: #c8102e;
-  border-color: #c8102e;
-  color: white;
+  background: var(--brand);
+  border-color: var(--brand);
+}
+
+.feed-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  .feed-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feed-filters {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  padding: 18px;
+}
+
+.feed-filters summary {
+  cursor: pointer;
+  font-family: var(--sans);
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.feed-filters fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 16px;
+}
+
+.feed-filters legend {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.price-inputs {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.price-inputs input {
+  width: 80px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-sm);
+  color: #fff;
+}
+
+/* Item Browser filter panel (feed.jsx). The slider and campus rules are Sanket's
+   originals from main, recolored from NEU red to the theme blue. */
+.feed-filters__heading {
+  font-size: 18px;
+  margin-bottom: 14px;
+}
+
+.feed-status {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
 }
 
 .chip:has(input:focus-visible) {
-  outline: 2px solid #c8102e;
+  outline: 2px solid #fff;
   outline-offset: 2px;
 }
 
@@ -374,7 +976,7 @@
   right: 9px;
   height: 4px;
   transform: translateY(-50%);
-  background: #d1d5db;
+  background: rgba(255, 255, 255, 0.3);
   border-radius: 2px;
 }
 
@@ -382,7 +984,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  background: #c8102e;
+  background: var(--brand-hover);
   border-radius: 2px;
 }
 
@@ -415,8 +1017,8 @@
   margin-top: 3px;
   border: 2px solid white;
   border-radius: 50%;
-  background: #c8102e;
-  box-shadow: 0 0 0 1px #c8102e;
+  background: var(--brand);
+  box-shadow: 0 0 0 1px var(--brand);
   cursor: pointer;
 }
 
@@ -426,111 +1028,51 @@
   height: 14px;
   border: 2px solid white;
   border-radius: 50%;
-  background: #c8102e;
-  box-shadow: 0 0 0 1px #c8102e;
+  background: var(--brand);
+  box-shadow: 0 0 0 1px var(--brand);
   cursor: pointer;
-}
-
-.price-inputs {
-  display: flex;
-  gap: 8px;
-}
-
-.price-inputs input {
-  width: 80px;
-  margin-left: 4px;
 }
 
 .campus-filter {
   display: block;
   margin-bottom: 16px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.campus-filter strong {
+  font-weight: 400;
 }
 
 .campus-filter select {
   display: block;
   width: 100%;
   margin-top: 6px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-size: 13px;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
-/* Listing page: photo on the left, details on the right. Stacks on phones. */
-.listing-page {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 32px;
-  align-items: start;
-}
-
-@media (max-width: 700px) {
-  .listing-page {
-    grid-template-columns: 1fr;
-  }
-}
-
-.listing-photo img,
-.listing-photo .listing-card-no-photo {
-  width: 100%;
-  aspect-ratio: 1;
+.avatar {
+  border-radius: 50%;
   object-fit: cover;
-  border-radius: 8px;
+  flex-shrink: 0;
 }
 
-.listing-page h1 .sold-badge {
-  vertical-align: middle;
-}
-
-.listing-price {
-  font-size: 28px;
-  font-weight: bold;
-  margin: 0 0 16px;
-}
-
-/* Label / value pairs (Condition: Good, Campus: Boston, ...) in two columns. */
-.listing-facts {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 6px 16px;
-  margin: 0 0 16px;
-}
-
-.listing-facts dt {
-  color: #6b7280;
-}
-
-.listing-facts dd {
-  margin: 0;
-}
-
-.listing-description {
-  white-space: pre-wrap; /* keep the line breaks the seller typed */
-}
-
-.listing-seller {
-  margin: 16px 0;
-}
-
-.listing-seller-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: inherit;
-  text-decoration: none;
-}
-
-.listing-actions {
+.avatar-placeholder {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
-  margin: 16px 0;
-}
-
-.safety-tips {
-  padding: 12px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-}
-
-.safety-tips ul {
-  margin: 6px 0 0;
-  padding-left: 20px;
+  justify-content: center;
+  background: #fff;
+  color: #0a1030;
+  font-weight: 700;
+  font-family: var(--sans);
 }

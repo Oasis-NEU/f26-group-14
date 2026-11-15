@@ -4,25 +4,28 @@ import { supabase } from '../lib/supabase'
 import { shrinkImage } from '../lib/shrinkImage'
 import { CAMPUS_NAMES } from '../lib/listingOptions'
 import Avatar from '../components/ui/Avatar'
+import PageShell from '../components/ui/PageShell'
+import TopNav from '../components/ui/TopNav'
+import Button from '../components/ui/Button'
 
-const AVATAR_SIZE = 400 // profile pictures are shown small, so 400px is plenty
+
+
+const AVATAR_SIZE = 400
 const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
-// Edit your own profile: name, bio, and profile picture.
 export default function Settings({ session }) {
   const userId = session.user.id
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [bio, setBio] = useState('')
-  const [campus, setCampus] = useState('') // '' means not set
-  const [avatarUrl, setAvatarUrl] = useState('') // the picture already saved
-  const [newAvatar, setNewAvatar] = useState(null) // a picture picked but not saved yet
+  const [campus, setCampus] = useState('')
+  const [avatarUrl, setAvatarUrl] = useState('')
+  const [newAvatar, setNewAvatar] = useState(null)
   const [previewUrl, setPreviewUrl] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
 
-  // Fill the form with the profile as it is now.
   useEffect(() => {
     let ignore = false
 
@@ -80,7 +83,6 @@ export default function Settings({ session }) {
     setSaving(true)
     setMessage('')
 
-    // Step 1: if there's a new picture, upload it over the old one.
     let savedAvatarUrl = avatarUrl || null
     if (newAvatar) {
       const path = `${userId}/avatar`
@@ -94,13 +96,10 @@ export default function Settings({ session }) {
         return
       }
 
-      // The file name never changes, so browsers might keep showing the old picture.
-      // Adding ?v=<time> makes the link different each time, which forces a fresh download.
       const { publicUrl } = supabase.storage.from('avatars').getPublicUrl(path).data
       savedAvatarUrl = `${publicUrl}?v=${Date.now()}`
     }
 
-    // Step 2: save the text fields and the picture link.
     const { error } = await supabase
       .from('profiles')
       .update({
@@ -125,73 +124,78 @@ export default function Settings({ session }) {
     setMessage('Saved!')
   }
 
-  if (loading) return <p>Loading...</p>
-
   return (
-    <div>
-      <h1>Settings</h1>
-      <p>
-        <Link to={`/profile/${userId}`}>View my profile</Link>
-      </p>
+    <PageShell variant="gradient">
+      <TopNav profileHref={`/profile/${userId}`} />
+      {loading ? (
+        <p className="state">Loading...</p>
+      ) : (
+        <>
+          <h1 className="page-title">Settings</h1>
+          <p style={{ marginBottom: 16 }}>
+            <Link to={`/profile/${userId}`} className="auth-footer"><u>View my profile</u></Link>
+          </p>
 
-      <form className="form-stack" onSubmit={handleSubmit}>
-        <fieldset>
-          <legend>Profile picture</legend>
-          <Avatar url={previewUrl || avatarUrl} name={firstName || '?'} />
-          <label className="photo-button">
-            Change picture
-            <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleAvatarChange} />
-          </label>
-        </fieldset>
+          <div style={{ maxWidth: 560 }}>
+            <form className="form-stack" onSubmit={handleSubmit}>
+              <fieldset>
+                <legend>Profile picture</legend>
+                <Avatar url={previewUrl || avatarUrl} name={firstName || '?'} />
+                <label className="photo-button">
+                  Change picture
+                  <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleAvatarChange} />
+                </label>
+              </fieldset>
 
-        <label>
-          First name
-          <input type="text" maxLength={50} value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-        </label>
+              <label>
+                First name
+                <input type="text" maxLength={50} value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)} />
+              </label>
 
-        <label>
-          Last name (optional)
-          <input type="text" maxLength={50} value={lastName} onChange={(e) => setLastName(e.target.value)} />
-        </label>
+              <label>
+                Last name (optional)
+                <input type="text" maxLength={50} value={lastName}
+                  onChange={(e) => setLastName(e.target.value)} />
+              </label>
 
-        <label>
-          Campus (optional)
-          <select value={campus} onChange={(e) => setCampus(e.target.value)}>
-            <option value="">Not set</option>
-            {CAMPUS_NAMES.map((name) => (
-              <option key={name} value={name}>{name}</option>
-            ))}
-          </select>
-          <small>Fills in automatically when you sell, and shows your campus first in the Feed.</small>
-        </label>
+              <label>
+                Campus (optional)
+                <select value={campus} onChange={(e) => setCampus(e.target.value)}>
+                  <option value="">Not set</option>
+                  {CAMPUS_NAMES.map((name) => (
+                    <option key={name} value={name}>{name}</option>
+                  ))}
+                </select>
+                <small className="form-help">Fills in automatically when you sell, and shows your campus first in the Feed.</small>
+              </label>
 
-        <label>
-          Bio
-          <textarea
-            maxLength={500}
-            placeholder="Year, major, what you usually sell..."
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-          />
-          <small>{bio.length}/500</small>
-        </label>
+              <label>
+                Bio
+                <textarea maxLength={500} placeholder="Year, major, what you usually sell..."
+                  value={bio} onChange={(e) => setBio(e.target.value)} />
+                <small className="form-help">{bio.length}/500</small>
+              </label>
 
-        <button type="submit" disabled={saving}>
-          {saving ? 'Saving...' : 'Save changes'}
-        </button>
-      </form>
+              <Button type="submit" variant="primary" disabled={saving}>
+                {saving ? 'Saving...' : 'Save changes'}
+              </Button>
+            </form>
 
-      {message && <p>{message}</p>}
+            {message && <p className="form-message" style={{ marginTop: 16 }}>{message}</p>}
 
-      <ChangePasswordForm email={session.user.email} />
-    </div>
+            <div style={{ marginTop: 40 }}>
+              <ChangePasswordForm email={session.user.email} />
+            </div>
+          </div>
+        </>
+      )}
+    </PageShell>
   )
 }
 
 const MIN_PASSWORD_LENGTH = 8
 
-// Separate small form for changing your password while logged in.
-// Asks for the current password first, so someone using your unlocked laptop can't change it.
 function ChangePasswordForm({ email }) {
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -211,7 +215,7 @@ function ChangePasswordForm({ email }) {
       return
     }
     if (newPassword !== confirmPassword) {
-      setMessage('New passwords don\'t match.')
+      setMessage("New passwords don't match.")
       return
     }
     if (newPassword === currentPassword) {
@@ -222,7 +226,6 @@ function ChangePasswordForm({ email }) {
     setSaving(true)
     setMessage('')
 
-    // Step 1: check the current password by signing in with it. If it's wrong, stop here.
     const { error: checkError } = await supabase.auth.signInWithPassword({ email, password: currentPassword })
     if (checkError) {
       setSaving(false)
@@ -230,7 +233,6 @@ function ChangePasswordForm({ email }) {
       return
     }
 
-    // Step 2: it was right, so save the new password.
     const { error } = await supabase.auth.updateUser({ password: newPassword })
     setSaving(false)
 
@@ -246,38 +248,26 @@ function ChangePasswordForm({ email }) {
 
   return (
     <form className="form-stack" onSubmit={handleSubmit}>
-      <h2>Change password</h2>
+      <h2 className="section-heading" style={{ margin: '0 0 8px' }}>Change password</h2>
       <label>
         Current password
-        <input
-          type="password"
-          autoComplete="current-password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-        />
+        <input type="password" autoComplete="current-password" value={currentPassword}
+          onChange={(e) => setCurrentPassword(e.target.value)} />
       </label>
       <label>
         New password (at least {MIN_PASSWORD_LENGTH} characters)
-        <input
-          type="password"
-          autoComplete="new-password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-        />
+        <input type="password" autoComplete="new-password" value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)} />
       </label>
       <label>
         Confirm new password
-        <input
-          type="password"
-          autoComplete="new-password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
+        <input type="password" autoComplete="new-password" value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)} />
       </label>
-      <button type="submit" disabled={saving}>
+      <Button type="submit" variant="primary" disabled={saving}>
         {saving ? 'Saving...' : 'Update password'}
-      </button>
-      {message && <p>{message}</p>}
+      </Button>
+      {message && <p className="form-message">{message}</p>}
     </form>
   )
 }

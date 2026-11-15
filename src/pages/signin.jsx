@@ -2,16 +2,20 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import VerifyCodeForm from '../components/auth/VerifyCodeForm'
+import PageShell from '../components/ui/PageShell'
+import TopBar from '../components/ui/TopBar'
+import Button from '../components/ui/Button'
 
-// Log in with Northeastern email + password.
-// If the account was never verified, offers to email a new code.
+
+
+
 export default function SignIn() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
-  const [unverified, setUnverified] = useState(false) // tried to sign in to an unverified account
-  const [needsVerifying, setNeedsVerifying] = useState(false) // showing the code form
+  const [unverified, setUnverified] = useState(false)
+  const [needsVerifying, setNeedsVerifying] = useState(false)
   const location = useLocation()
 
   async function handleSubmit(event) {
@@ -26,12 +30,10 @@ export default function SignIn() {
     })
     setLoading(false)
 
-    // On success there's nothing to do here: App.jsx sees the new session and
-    // the /signin route sends the user on to where they were going.
     if (!error) return
 
     if (error.code === 'email_not_confirmed') {
-      setMessage('Your account isn\'t verified yet.')
+      setMessage("Your account isn't verified yet.")
       setUnverified(true)
     } else if (error.code === 'invalid_credentials') {
       setMessage('Wrong email or password.')
@@ -40,7 +42,6 @@ export default function SignIn() {
     }
   }
 
-  // Sends a new sign up code, then switches to the code form.
   async function handleSendVerifyCode() {
     const cleanEmail = email.trim().toLowerCase()
     setEmail(cleanEmail)
@@ -54,60 +55,69 @@ export default function SignIn() {
 
   if (needsVerifying) {
     return (
-      <div>
-        <h1>Verify your email</h1>
-        <VerifyCodeForm
-          email={email}
-          type="email"
-          onResend={() => supabase.auth.resend({ type: 'signup', email })}
-        />
-      </div>
+      <PageShell variant="hero" decorated>
+        <TopBar />
+        <div className="form-card">
+          <h1 style={{ fontSize: 32, marginBottom: 16 }}>Verify your email</h1>
+          <VerifyCodeForm
+            email={email}
+            type="email"
+            onResend={() => supabase.auth.resend({ type: 'signup', email })}
+          />
+        </div>
+      </PageShell>
     )
   }
 
   return (
-    <div>
-      <h1>Sign in</h1>
+    <PageShell variant="hero" decorated>
+      <TopBar loginTo="/signup" />
+      <div className="form-card">
+        <h1 style={{ fontSize: 36, marginBottom: 24 }}>Sign in</h1>
 
-      <form className="form-stack" onSubmit={handleSubmit}>
-        <label>
-          Northeastern email
-          <input
-            type="email"
-            autoComplete="email"
-            placeholder="you@northeastern.edu"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </label>
+        <form className="form-stack" onSubmit={handleSubmit}>
+          <label>
+            Northeastern email
+            <input
+              type="email"
+              autoComplete="email"
+              placeholder="you@northeastern.edu"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
 
-        <label>
-          Password
-          <input
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
+          <label>
+            Password
+            <input
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Signing in...' : 'Sign in'}
-        </button>
-      </form>
+          <Button type="submit" variant="primary" size="lg" disabled={loading}>
+            {loading ? 'Signing in...' : 'Sign in'}
+          </Button>
+        </form>
 
-      {message && <p>{message}</p>}
-      {unverified && (
-        <button type="button" onClick={handleSendVerifyCode}>Email me a verification code</button>
-      )}
+        {message && <p className="form-message" style={{ marginTop: 16 }}>{message}</p>}
+        {unverified && (
+          <div style={{ marginTop: 12 }}>
+            <Button variant="outline" onClick={handleSendVerifyCode}>
+              Email me a verification code
+            </Button>
+          </div>
+        )}
 
-      {/* Pass location.state along so "send them back where they were going" still works after signing up. */}
-      <p>
-        New to HuskyExchange? <Link to="/signup" state={location.state}>Create an account</Link>
-      </p>
-      <p>
-        <Link to="/reset-password">Forgot your password?</Link>
-      </p>
-    </div>
+        <p className="auth-footer">
+          New to HuskyExchange? <Link to="/signup" state={location.state}>Create an account</Link>
+        </p>
+        <p className="auth-footer">
+          <Link to="/reset-password">Forgot your password?</Link>
+        </p>
+      </div>
+    </PageShell>
   )
 }

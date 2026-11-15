@@ -1,0 +1,25 @@
+- generic [ref=f10e4]:
+  - link "Hello PREVIEW" [ref=f10e6] [cursor=pointer]:
+    - /url: /profile/preview
+  - generic [ref=f10e14]:
+    - heading "HotDeals" [level=1] [ref=f10e15]
+    - paragraph [ref=f10e16]: Not sure where to start?
+    - paragraph [ref=f10e17]: "Here are some of our current offerings:"
+    - link "Go to browser" [ref=f10e19] [cursor=pointer]:
+      - /url: /feed
+  - generic [ref=f10e20]:
+    - link "ITEM1 Description" [ref=f10e21] [cursor=pointer]:
+      - /url: /feed
+      - generic [ref=f10e22]:
+        - generic [ref=f10e23]: ITEM1
+        - generic [ref=f10e24]: Description
+    - link "ITEM2 Description" [ref=f10e31] [cursor=pointer]:
+      - /url: /feed
+      - generic [ref=f10e32]:
+        - generic [ref=f10e33]: ITEM2
+        - generic [ref=f10e34]: Description
+    - link "ITEM3 Description" [ref=f10e41] [cursor=pointer]:
+      - /url: /feed
+      - generic [ref=f10e42]:
+        - generic [ref=f10e43]: ITEM3
+        - generic [ref=f10e44]: Description

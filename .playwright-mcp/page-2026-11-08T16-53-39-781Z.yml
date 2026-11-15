@@ -1,0 +1,50 @@
+- generic [ref=f7e4]:
+  - navigation [ref=f7e5]:
+    - link [ref=f7e6] [cursor=pointer]:
+      - /url: /
+      - text: Husky
+      - strong [ref=f7e7]: Exchange
+    - generic [ref=f7e8]:
+      - link "HotDeals" [ref=f7e9] [cursor=pointer]:
+        - /url: /
+      - link "Item Browser" [ref=f7e10] [cursor=pointer]:
+        - /url: /feed
+      - link "Orders" [ref=f7e11] [cursor=pointer]:
+        - /url: /orders
+      - link "Sell" [ref=f7e12] [cursor=pointer]:
+        - /url: /sell
+    - link [ref=f7e14] [cursor=pointer]:
+      - /url: /signin
+  - generic [ref=f7e19]:
+    - heading "My Orders" [level=1] [ref=f7e20]
+    - generic [ref=f7e21]:
+      - button "Outgoing" [ref=f7e22] [cursor=pointer]
+      - button "Incoming" [ref=f7e23] [cursor=pointer]
+  - heading "Listed/Pending" [level=2] [ref=f7e24]
+  - generic [ref=f7e25]:
+    - generic [ref=f7e27]:
+      - generic [ref=f7e28]: ITEM1
+      - generic [ref=f7e29]: Price
+      - generic [ref=f7e30]: Description
+    - generic [ref=f7e38]:
+      - generic [ref=f7e39]: ITEM2
+      - generic [ref=f7e40]: Price
+      - generic [ref=f7e41]: Description
+    - generic [ref=f7e49]:
+      - generic [ref=f7e50]: ITEM3
+      - generic [ref=f7e51]: Price
+      - generic [ref=f7e52]: Description
+  - heading "Fulfilled" [level=2] [ref=f7e59]
+  - generic [ref=f7e60]:
+    - generic [ref=f7e62]:
+      - generic [ref=f7e63]: ITEM1
+      - generic [ref=f7e64]: Price
+      - generic [ref=f7e65]: Description
+    - generic [ref=f7e73]:
+      - generic [ref=f7e74]: ITEM2
+      - generic [ref=f7e75]: Price
+      - generic [ref=f7e76]: Description
+    - generic [ref=f7e84]:
+      - generic [ref=f7e85]: ITEM3
+      - generic [ref=f7e86]: Price
+      - generic [ref=f7e87]: Description
