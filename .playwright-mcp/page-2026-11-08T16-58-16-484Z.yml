@@ -1,0 +1,11 @@
+- generic [ref=f1e4]:
+  - link "Login" [ref=f1e6] [cursor=pointer]:
+    - /url: /signin
+  - generic [ref=f1e8]:
+    - heading "HuskyExchange" [level=1] [ref=f1e9]
+    - paragraph [ref=f1e10]: Buy and sell dorm essentials
+    - generic [ref=f1e11]:
+      - link "Get started" [ref=f1e12] [cursor=pointer]:
+        - /url: /signup
+      - link "Browse" [ref=f1e13] [cursor=pointer]:
+        - /url: /feed

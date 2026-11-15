@@ -2,14 +2,12 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import VerifyCodeForm from '../components/auth/VerifyCodeForm'
+import PageShell from '../components/ui/PageShell'
+import TopBar from '../components/ui/TopBar'
+import Button from '../components/ui/Button'
 
 const MIN_PASSWORD_LENGTH = 8
 
-// Forgot password, in three steps:
-//   1. 'email'    - enter your email, we send a code
-//   2. 'code'     - enter the code (this logs you in)
-//   3. 'password' - choose a new password
-// Also how accounts made before passwords existed can set their first password.
 export default function ResetPassword() {
   const [step, setStep] = useState('email')
   const [email, setEmail] = useState('')
@@ -44,7 +42,7 @@ export default function ResetPassword() {
       return
     }
     if (newPassword !== confirmPassword) {
-      setMessage('Passwords don\'t match.')
+      setMessage("Passwords don't match.")
       return
     }
 
@@ -60,67 +58,57 @@ export default function ResetPassword() {
   }
 
   return (
-    <div>
-      <h1>Reset your password</h1>
+    <PageShell variant="hero" decorated>
+      <TopBar loginTo="/signin" />
+      <div className="form-card">
+        <h1 style={{ fontSize: 32, marginBottom: 24 }}>Reset your password</h1>
 
-      {step === 'email' && (
-        <form className="form-stack" onSubmit={handleSendCode}>
-          <label>
-            Northeastern email
-            <input
-              type="email"
-              autoComplete="email"
-              placeholder="you@northeastern.edu"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </label>
-          <button type="submit" disabled={loading}>
-            {loading ? 'Sending...' : 'Send code'}
-          </button>
-        </form>
-      )}
+        {step === 'email' && (
+          <form className="form-stack" onSubmit={handleSendCode}>
+            <label>
+              Northeastern email
+              <input type="email" autoComplete="email" placeholder="you@northeastern.edu" value={email}
+                onChange={(e) => setEmail(e.target.value)} />
+            </label>
+            <Button type="submit" variant="primary" size="lg" disabled={loading}>
+              {loading ? 'Sending...' : 'Send code'}
+            </Button>
+          </form>
+        )}
 
-      {step === 'code' && (
-        <VerifyCodeForm
-          email={email}
-          type="recovery"
-          onResend={() => supabase.auth.resetPasswordForEmail(email)}
-          onVerified={() => setStep('password')}
-        />
-      )}
+        {step === 'code' && (
+          <VerifyCodeForm
+            email={email}
+            type="recovery"
+            onResend={() => supabase.auth.resetPasswordForEmail(email)}
+            onVerified={() => setStep('password')}
+          />
+        )}
 
-      {step === 'password' && (
-        <form className="form-stack" onSubmit={handleSavePassword}>
-          <label>
-            New password (at least {MIN_PASSWORD_LENGTH} characters)
-            <input
-              type="password"
-              autoComplete="new-password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-          </label>
-          <label>
-            Confirm new password
-            <input
-              type="password"
-              autoComplete="new-password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-          </label>
-          <button type="submit" disabled={loading}>
-            {loading ? 'Saving...' : 'Save new password'}
-          </button>
-        </form>
-      )}
+        {step === 'password' && (
+          <form className="form-stack" onSubmit={handleSavePassword}>
+            <label>
+              New password (at least {MIN_PASSWORD_LENGTH} characters)
+              <input type="password" autoComplete="new-password" value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)} />
+            </label>
+            <label>
+              Confirm new password
+              <input type="password" autoComplete="new-password" value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)} />
+            </label>
+            <Button type="submit" variant="primary" size="lg" disabled={loading}>
+              {loading ? 'Saving...' : 'Save new password'}
+            </Button>
+          </form>
+        )}
 
-      {message && <p>{message}</p>}
+        {message && <p className="form-message" style={{ marginTop: 16 }}>{message}</p>}
 
-      <p>
-        <Link to="/signin">Back to sign in</Link>
-      </p>
-    </div>
+        <p className="auth-footer">
+          <Link to="/signin">Back to sign in</Link>
+        </p>
+      </div>
+    </PageShell>
   )
 }

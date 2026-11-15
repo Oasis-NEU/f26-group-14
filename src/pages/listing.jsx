@@ -3,31 +3,33 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { formatPrice } from '../lib/formatPrice'
 import { LISTING_PHOTOS_BUCKET, getListingPhotoPath } from '../lib/listingPhotos'
+import PageShell from '../components/ui/PageShell'
+import TopNav from '../components/ui/TopNav'
+import Button from '../components/ui/Button'
 import Avatar from '../components/ui/Avatar'
+import PhotoPlaceholder from '../components/ui/PhotoPlaceholder'
 
-// What guests may see (no seller_email, and only the seller's first name).
+
+
 const GUEST_COLUMNS =
   'id, seller_id, title, description, price, category, condition, campus, meetup_location, ' +
   'payment_methods, photo_url, status, created_at, seller:profiles(id, first_name)'
 
-// Logged-in users also get the seller's email, full name, and picture.
 const MEMBER_COLUMNS = GUEST_COLUMNS.replace(
   'seller:profiles(id, first_name)',
   'seller_email, seller:profiles(id, first_name, last_name, avatar_url)',
 )
 
-// One listing's full page: /listing/<id>. Open to guests.
-// Buyers can contact the seller; the seller can edit, mark as sold, or delete it.
 export default function Listing({ session }) {
   const { id } = useParams()
   const [listing, setListing] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [working, setWorking] = useState(false) // true while marking sold / deleting
+  const [working, setWorking] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
 
-  const isValidId = /^\d+$/.test(id) // listing ids are whole numbers; anything else can't exist
+  const isValidId = /^\d+$/.test(id)
   const isLoggedIn = Boolean(session)
 
   useEffect(() => {
@@ -42,11 +44,8 @@ export default function Listing({ session }) {
         .maybeSingle()
 
       if (ignore) return
-      if (error) {
-        setError(error.message)
-      } else {
-        setListing(data)
-      }
+      if (error) setError(error.message)
+      else setListing(data)
       setLoading(false)
     }
 
@@ -56,24 +55,17 @@ export default function Listing({ session }) {
     }
   }, [id, isValidId, isLoggedIn])
 
-  // Switch between "available" and "sold".
   async function handleToggleSold() {
     const newStatus = listing.status === 'sold' ? 'available' : 'sold'
     setWorking(true)
     const { error } = await supabase.from('listings').update({ status: newStatus }).eq('id', listing.id)
     setWorking(false)
-
-    if (error) {
-      setError(error.message)
-    } else {
-      setListing({ ...listing, status: newStatus })
-    }
+    if (error) setError(error.message)
+    else setListing({ ...listing, status: newStatus })
   }
 
   async function handleDelete() {
-    // window.confirm shows the browser's built-in "OK / Cancel" box and returns true for OK.
-    if (!window.confirm('Delete this listing? This can\'t be undone.')) return
-
+    if (!window.confirm("Delete this listing? This can't be undone.")) return
     setWorking(true)
     const { error } = await supabase.from('listings').delete().eq('id', listing.id)
     if (error) {
@@ -81,27 +73,50 @@ export default function Listing({ session }) {
       setError(error.message)
       return
     }
-
-    // The listing is gone, so delete its photo too.
     if (listing.photo_url) {
       await supabase.storage.from(LISTING_PHOTOS_BUCKET).remove([getListingPhotoPath(listing.photo_url)])
     }
     navigate(`/profile/${session.user.id}`)
   }
 
-  if (!isValidId) return <p>This listing doesn't exist.</p>
-  if (loading) return <p>Loading...</p>
-  if (error) return <p>Something went wrong: {error}</p>
-  if (!listing) return <p>This listing doesn't exist or was deleted.</p>
+  const profileHref = session ? `/profile/${session.user.id}` : '/signin'
 
+  return (
+    <PageShell variant="gradient">
+      <TopNav profileHref={profileHref} />
+
+      {!isValidId ? (
+        <p className="state">This listing doesn't exist.</p>
+      ) : loading ? (
+        <p className="state">Loading...</p>
+      ) : error ? (
+        <p className="state">Something went wrong: {error}</p>
+      ) : !listing ? (
+        <p className="state">This listing doesn't exist or was deleted.</p>
+      ) : (
+        <ListingBody
+          listing={listing}
+          session={session}
+          working={working}
+          onToggleSold={handleToggleSold}
+          onDelete={handleDelete}
+          backTo={location.pathname}
+        />
+      )}
+    </PageShell>
+  )
+}
+
+function ListingBody({ listing, session, working, onToggleSold, onDelete, backTo }) {
+  const isLoggedIn = Boolean(session)
   const isMine = session?.user.id === listing.seller_id
   const isSold = listing.status === 'sold'
   const seller = listing.seller
   const sellerName = [seller.first_name, seller.last_name].filter(Boolean).join(' ')
-  const postedOn = new Date(listing.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  const postedOn = new Date(listing.created_at).toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric',
+  })
 
-  // mailto: links open the user's email app with the address, subject, and message filled in.
-  // encodeURIComponent makes spaces and symbols safe to put inside a link.
   const emailSubject = encodeURIComponent(`HuskyExchange: ${listing.title}`)
   const offerBody = encodeURIComponent(
     `Hi ${seller.first_name}! I saw your "${listing.title}" on HuskyExchange. Would you take $__ for it?`,
@@ -113,14 +128,14 @@ export default function Listing({ session }) {
         {listing.photo_url ? (
           <img src={listing.photo_url} alt={listing.title} />
         ) : (
-          <div className="listing-card-no-photo">No photo</div>
+          <PhotoPlaceholder />
         )}
       </div>
 
-      <div className="listing-details">
-        <h1>
+      <div>
+        <h1 className="page-title" style={{ marginBottom: 4 }}>
           {listing.title}
-          {isSold && <span className="sold-badge">Sold</span>}
+          {isSold && <span className="item-card__sold">Sold</span>}
         </h1>
         <p className="listing-price">{formatPrice(listing.price)}</p>
 
@@ -141,46 +156,45 @@ export default function Listing({ session }) {
 
         {listing.description && <p className="listing-description">{listing.description}</p>}
 
-        {/* Seller: logged-in users can open their profile; guests just see the first name. */}
-        <div className="listing-seller">
+        <div style={{ margin: '16px 0', display: 'flex', alignItems: 'center', gap: 12 }}>
           {isLoggedIn ? (
-            <Link to={`/profile/${seller.id}`} className="listing-seller-link">
+            <Link to={`/profile/${seller.id}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 10, color: 'inherit' }}>
               <Avatar url={seller.avatar_url} name={seller.first_name} size={40} />
-              <span>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: 13 }}>
                 Sold by <strong>{sellerName}</strong>
               </span>
             </Link>
           ) : (
-            <span>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 13 }}>
               Sold by <strong>{seller.first_name}</strong>
             </span>
           )}
         </div>
 
-        {/* What you can do depends on who you are. */}
         <div className="listing-actions">
           {isMine ? (
             <>
-              <Link to={`/listing/${listing.id}/edit`}>Edit</Link>
-              <button type="button" onClick={handleToggleSold} disabled={working}>
+              <Button as={Link} to={`/listing/${listing.id}/edit`} variant="outline">Edit</Button>
+              <Button variant="primary" onClick={onToggleSold} disabled={working}>
                 {isSold ? 'Mark as available' : 'Mark as sold'}
-              </button>
-              <button type="button" onClick={handleDelete} disabled={working}>
-                Delete
-              </button>
+              </Button>
+              <Button variant="ghost" onClick={onDelete} disabled={working}>Delete</Button>
             </>
           ) : isSold ? (
-            <p>This item has been sold.</p>
+            <p style={{ fontFamily: 'var(--mono)' }}>This item has been sold.</p>
           ) : isLoggedIn ? (
             <>
-              <a href={`mailto:${listing.seller_email}?subject=${emailSubject}`}>Email seller</a>
-              <a href={`mailto:${listing.seller_email}?subject=${emailSubject}&body=${offerBody}`}>Make an offer</a>
+              <Button as="a" href={`mailto:${listing.seller_email}?subject=${emailSubject}`} variant="primary">
+                Email seller
+              </Button>
+              <Button as="a" href={`mailto:${listing.seller_email}?subject=${emailSubject}&body=${offerBody}`} variant="outline">
+                Make an offer
+              </Button>
             </>
           ) : (
-            // Guests are sent to sign in, then brought back to this listing.
-            <Link to="/signin" state={{ from: location.pathname }}>
+            <Button as={Link} to="/signin" state={{ from: backTo }} variant="primary">
               Sign in to contact the seller
-            </Link>
+            </Button>
           )}
         </div>
 

@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import ListingForm from '../components/listings/ListingForm'
+import PageShell from '../components/ui/PageShell'
+import TopNav from '../components/ui/TopNav'
 
-// Edit one of your own listings: /listing/<id>/edit.
-// Loads the listing, makes sure it's yours, then shows the same form as the Sell page, pre-filled.
 export default function EditListing({ session }) {
   const { id } = useParams()
   const [listing, setListing] = useState(null)
@@ -22,11 +22,8 @@ export default function EditListing({ session }) {
         .maybeSingle()
 
       if (ignore) return
-      if (error) {
-        setError(error.message)
-      } else {
-        setListing(data)
-      }
+      if (error) setError(error.message)
+      else setListing(data)
       setLoading(false)
     }
 
@@ -36,20 +33,29 @@ export default function EditListing({ session }) {
     }
   }, [id])
 
-  if (loading) return <p>Loading...</p>
-  if (error) return <p>Something went wrong: {error}</p>
-  if (!listing) return <p>This listing doesn't exist.</p>
-
-  // The database would refuse to save someone else's listing anyway; this just explains why.
-  if (listing.seller_id !== session.user.id) return <p>You can only edit your own listings.</p>
-
   return (
-    <div>
-      <p>
-        <Link to={`/listing/${listing.id}`}>← Back to listing</Link>
-      </p>
-      <h1>Edit listing</h1>
-      <ListingForm session={session} existingListing={listing} />
-    </div>
+    <PageShell variant="deep">
+      <TopNav profileHref={`/profile/${session.user.id}`} />
+
+      {loading ? (
+        <p className="state">Loading...</p>
+      ) : error ? (
+        <p className="state">Something went wrong: {error}</p>
+      ) : !listing ? (
+        <p className="state">This listing doesn't exist.</p>
+      ) : listing.seller_id !== session.user.id ? (
+        <p className="state">You can only edit your own listings.</p>
+      ) : (
+        <>
+          <p style={{ marginBottom: 12 }}>
+            <Link to={`/listing/${listing.id}`} className="auth-footer">← Back to listing</Link>
+          </p>
+          <h1 className="page-title">Edit listing</h1>
+          <div style={{ marginTop: 24, maxWidth: 560 }}>
+            <ListingForm session={session} existingListing={listing} />
+          </div>
+        </>
+      )}
+    </PageShell>
   )
 }

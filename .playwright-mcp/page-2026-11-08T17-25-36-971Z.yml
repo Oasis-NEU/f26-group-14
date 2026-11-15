@@ -1,0 +1,45 @@
+- generic [ref=f6e4]:
+  - link "Login" [ref=f6e6] [cursor=pointer]:
+    - /url: /signin
+  - generic [ref=f6e7]:
+    - heading "Create your account" [level=1] [ref=f6e8]
+    - generic [ref=f6e9]:
+      - generic [ref=f6e10]:
+        - text: First name
+        - textbox "First name" [ref=f6e11]
+      - generic [ref=f6e12]:
+        - text: Last name (optional)
+        - textbox "Last name (optional)" [ref=f6e13]
+      - generic [ref=f6e14]:
+        - text: Campus (optional)
+        - combobox "Campus (optional)" [ref=f6e15]:
+          - option "Choose later" [selected]
+          - option "Boston"
+          - option "Arlington"
+          - option "Burlington"
+          - option "Charlotte"
+          - option "London"
+          - option "Miami"
+          - option "Nahant"
+          - option "New York City"
+          - option "Oakland"
+          - option "Portland, Maine"
+          - option "Seattle"
+          - option "Silicon Valley"
+          - option "Toronto"
+          - option "Vancouver"
+      - generic [ref=f6e16]:
+        - text: Northeastern email
+        - textbox "Northeastern email" [ref=f6e17]:
+          - /placeholder: you@northeastern.edu
+      - generic [ref=f6e18]:
+        - text: Password (at least 8 characters)
+        - textbox "Password (at least 8 characters)" [ref=f6e19]
+      - generic [ref=f6e20]:
+        - text: Confirm password
+        - textbox "Confirm password" [ref=f6e21]
+      - button "Create account" [ref=f6e22] [cursor=pointer]
+    - paragraph [ref=f6e23]:
+      - text: Already have an account?
+      - link "Sign in" [ref=f6e24] [cursor=pointer]:
+        - /url: /signin
