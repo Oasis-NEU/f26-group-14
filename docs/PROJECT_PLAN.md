@@ -207,7 +207,7 @@ Copy this block into your own log and tick it off there.
 **Subagent:** `feed-and-data` · **ADRs:** [0006](adr/0006-data-model-and-rls.md), [0010](adr/0010-campuses-and-option-lists-in-code.md)
 
 **Test runner** *(from Austin)*
-- [ ] **OPS-05** **Do this first: everyone's tests depend on it.** Add Vitest, React Testing Library, user-event, jest-dom, and jsdom; add `npm test` and `npm run test:watch`; add a shared mock for `src/lib/supabase.js`. Follow the stack in [testing.md](workflow/testing.md)
+- [ ] 🚧 (ops-05-vitest) **OPS-05** **Do this first: everyone's tests depend on it.** Add Vitest, React Testing Library, user-event, jest-dom, and jsdom; add `npm test` and `npm run test:watch`; add a shared mock for `src/lib/supabase.js`. Follow the stack in [testing.md](workflow/testing.md)
 - [ ] **TEST-01** Backfill the required tests for features already built (merged in #6) (see "Already built: backfill" in [testing.md](workflow/testing.md)). Each owner writes the tests for their area. Sanket writes the shared mock and the first examples
 
 **Data**
