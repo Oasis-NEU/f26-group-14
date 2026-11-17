@@ -173,6 +173,9 @@ export default function Listing({ session }) {
             <p>This item has been sold.</p>
           ) : isLoggedIn ? (
             <>
+              <Link to={`/messages?listing=${listing.id}&to=${listing.seller_id}`} className="btn btn-primary">
+                Message seller
+              </Link>
               <a href={`mailto:${listing.seller_email}?subject=${emailSubject}`}>Email seller</a>
               <a href={`mailto:${listing.seller_email}?subject=${emailSubject}&body=${offerBody}`}>Make an offer</a>
             </>

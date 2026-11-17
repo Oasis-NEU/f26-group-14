@@ -5,14 +5,19 @@ import { pickHotDeals } from '../lib/hotDeals'
 import ListingCard from '../components/listings/ListingCard'
 import Logo from '../components/layout/Logo'
 import Ribbons from '../components/layout/Ribbons'
+import DemoOnboarding from '../components/auth/DemoOnboarding'
 
 // How many recent listings HotDeals looks through before picking the few it shows.
 const RECENT_LISTINGS_TO_CHECK = 24
 const HOT_DEALS_SHOWN = 3
 
+// `npm run demo` sets this, so the demo opens on a sign-in onboarding screen instead.
+const IS_DEMO = import.meta.env.VITE_DEMO_MODE === 'true'
+
 // "/" shows the landing page to guests and the HotDeals page to logged-in users.
 export default function Home({ session }) {
-  return session ? <HotDeals session={session} /> : <Landing />
+  if (session) return <HotDeals session={session} />
+  return IS_DEMO ? <DemoOnboarding /> : <Landing />
 }
 
 // Canva screen 1: big logo, tagline, and two buttons.

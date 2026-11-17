@@ -27,6 +27,13 @@ Newest entry first, one per working session or PR. Your Claude writes these and 
 - **Next / blocked on:** ...
 ```
 
+### 2026-11-16 — Demo onboarding, Messages tab, new Sell flow (ui-canva-restyle)
+- **Did:** Added a slowly moving background, a sign-in onboarding screen as the demo's home page, Messages and Settings tabs, and a "Message seller" button on listings. Sell is now a hub with "+ New listing" (`/sell/new`). The form needs a photo, a description, and your Northeastern email, which must match the signed-in account (the same rule as the `listings` RLS policy).
+- **Files:** `src/index.css`, `src/App.css`, `src/App.jsx`, `NavBar.jsx`, `ListingForm.jsx`, `DemoOnboarding.jsx` (new), `pages/messages.jsx` (new), `lib/conversations.js` + test (new), `pages/sell.jsx`, `pages/home.jsx`, `pages/listing.jsx`, `scripts/demo.js`
+- **Verified:** `npm run lint`, `npm run build`, `npx vitest@3.2.4 run` (14 pass). Ran the demo in a headless browser: onboarding, non-NEU email rejected, each required field's error, posting with a photo, Message seller → send, Settings, 375px with no sideways scroll, no console errors.
+- **Decisions:** Messages reads a `messages` table (`listing_id, sender_id, recipient_id, body, created_at`) that only the demo has. On the real database the tab says "coming soon". The table, RLS, and realtime are Sanket's MSG-* work; this is a proposed shape for it.
+- **Next / blocked on:** MSG-* migration + RLS for `messages`; test the email rule against the real project.
+
 ### 2026-11-07 — Restyle the app to the Canva mockups (ui-canva-restyle)
 
 - **Did:** Replaced the leftover Vite starter CSS with the Canva design: page gradient, glass panels, Inter + IBM Plex Mono, a new nav bar. Built the landing and HotDeals home, search and a hidden-by-default filter panel in the Item Browser, and a new `/orders` page.

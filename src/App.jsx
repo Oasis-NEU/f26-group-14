@@ -5,13 +5,14 @@ import RequireAuth from './components/auth/RequireAuth'
 import NavBar from './components/layout/NavBar'
 import Home from './pages/home'
 import Feed from './pages/feed'
-import Sell from './pages/sell'
+import Sell, { NewListing } from './pages/sell'
 import Settings from './pages/settings'
 import SignIn from './pages/signin'
 import SignUp from './pages/signup'
 import ResetPassword from './pages/resetpassword'
 import Profile from './pages/profile'
 import Orders from './pages/orders'
+import Messages from './pages/messages'
 import Listing from './pages/listing'
 import EditListing from './pages/editlisting'
 import './App.css'
@@ -58,6 +59,22 @@ function App() {
             element={
               <RequireAuth session={session} loading={loading}>
                 <Sell session={session} />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/sell/new"
+            element={
+              <RequireAuth session={session} loading={loading}>
+                <NewListing session={session} />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/messages"
+            element={
+              <RequireAuth session={session} loading={loading}>
+                <Messages session={session} />
               </RequireAuth>
             }
           />

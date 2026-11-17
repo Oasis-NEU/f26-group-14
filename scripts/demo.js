@@ -54,6 +54,24 @@ const listings = samples.map(([title, price, category, condition, description, s
 // Photos uploaded through the Sell form, kept in memory: path -> { type, bytes }.
 const uploads = new Map()
 
+// Two sample conversations so the Messages tab has something to show.
+// The real database has no messages table yet (MSG-*); this is the shape the app expects.
+const MINUTE_MS = 60 * 1000
+let nextMessageId = 1
+const messages = [
+  [1, OTHER_USER_ID, DEMO_USER_ID, 'Hi! Is the mini fridge still available?', 95],
+  [1, DEMO_USER_ID, OTHER_USER_ID, 'Yes it is! I can meet at Snell any afternoon this week.', 80],
+  [1, OTHER_USER_ID, DEMO_USER_ID, 'Perfect, does Thursday at 3 work? I can pay with Venmo.', 72],
+  [2, DEMO_USER_ID, OTHER_USER_ID, 'Would you take $20 for the calculus textbook?', 30],
+].map(([listingId, senderId, recipientId, body, minutesAgo]) => ({
+  id: nextMessageId++,
+  listing_id: listingId,
+  sender_id: senderId,
+  recipient_id: recipientId,
+  body,
+  created_at: new Date(Date.now() - minutesAgo * MINUTE_MS).toISOString(),
+}))
+
 // ---------- PostgREST-style filtering (just what the app uses) ----------
 
 // One query-string filter like "eq.Boston", "ilike.%lamp%", "in.(A,B)", "gte.10", "ov.{Cash}".
@@ -78,10 +96,20 @@ function matches(value, filter) {
   return true
 }
 
-const NOT_FILTERS = new Set(['select', 'order', 'limit', 'offset', 'columns'])
+const NOT_FILTERS = new Set(['select', 'order', 'limit', 'offset', 'columns', 'or'])
+
+// An "or" filter like "(sender_id.eq.X,recipient_id.eq.X)": the row matches if any part does.
+function matchesAny(row, orFilter) {
+  if (!orFilter) return true
+  return orFilter.slice(1, -1).split(',').some((part) => {
+    const dot = part.indexOf('.')
+    return matches(row[part.slice(0, dot)], part.slice(dot + 1))
+  })
+}
 
 function filterRows(rows, params) {
   let result = rows.filter((row) =>
+    matchesAny(row, params.get('or')) &&
     [...params].every(([key, filter]) => NOT_FILTERS.has(key) || matches(row[key], filter)))
   const order = params.get('order')
   if (order) {
@@ -121,6 +149,33 @@ function demoSession(email) {
 }
 
 // ---------- HTTP server ----------
+
+// The email inside the signed-in user's token, like auth.jwt() ->> 'email' in the real database.
+function tokenEmail(request) {
+  const token = (request.headers.authorization ?? '').replace(/^Bearer /, '')
+  try {
+    return JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString()).email ?? null
+  } catch {
+    return null
+  }
+}
+
+// supabase-js sends a photo as multipart form data, so pull the image out of the form.
+// A plain upload (body is the file itself) is kept as it is.
+function uploadedFile(contentType, body) {
+  const boundary = contentType.match(/boundary=(.+)$/)?.[1]
+  if (!contentType.startsWith('multipart/') || !boundary) return { type: contentType, bytes: body }
+
+  for (const part of body.toString('latin1').split(`--${boundary}`)) {
+    const headerEnd = part.indexOf('\r\n\r\n')
+    const type = part.slice(0, headerEnd).match(/content-type:\s*([^\r\n]+)/i)?.[1]
+    if (headerEnd !== -1 && type) {
+      const content = part.slice(headerEnd + 4).replace(/\r\n$/, '')
+      return { type, bytes: Buffer.from(content, 'latin1') }
+    }
+  }
+  return { type: contentType, bytes: body }
+}
 
 function readBody(request) {
   return new Promise((resolve) => {
@@ -184,7 +239,7 @@ const api = http.createServer(async (request, response) => {
       const file = uploads.get(key)
       return file ? send(response, 200, file.bytes, file.type) : send(response, 404, { message: 'Not found' })
     }
-    uploads.set(key, { type: request.headers['content-type'] ?? 'image/jpeg', bytes: body })
+    uploads.set(key, uploadedFile(request.headers['content-type'] ?? 'image/jpeg', body))
     return send(response, 200, { Key: key, Id: key })
   }
   if (path.match(/^\/storage\/v1\/object\/[^/]+$/) && request.method === 'DELETE') {
@@ -203,11 +258,20 @@ const api = http.createServer(async (request, response) => {
 
   if (path === '/rest/v1/listings') {
     if (request.method === 'POST') {
+      // Same rule as the real RLS policy: the listing's email must be the signed-in user's email.
+      const email = tokenEmail(request)
+      const fields = json()
+      if (fields.seller_email && fields.seller_email !== email) {
+        return send(response, 403, {
+          code: '42501',
+          message: 'new row violates row-level security policy for table "listings"',
+        })
+      }
       const listing = {
-        ...json(),
+        ...fields,
         id: nextId++,
         seller_id: DEMO_USER_ID,
-        seller_email: 'demo.husky@northeastern.edu',
+        seller_email: email ?? 'demo.husky@northeastern.edu',
         status: 'available',
         created_at: new Date().toISOString(),
       }
@@ -226,6 +290,15 @@ const api = http.createServer(async (request, response) => {
     return reply(chosen.map(withSeller))
   }
 
+  if (path === '/rest/v1/messages') {
+    if (request.method === 'POST') {
+      const message = { ...json(), id: nextMessageId++, sender_id: DEMO_USER_ID, created_at: new Date().toISOString() }
+      messages.push(message)
+      return reply([message])
+    }
+    return reply(filterRows(messages, url.searchParams))
+  }
+
   send(response, 404, { message: `Demo mode doesn't fake ${request.method} ${path}` })
 })
 
@@ -241,6 +314,8 @@ api.listen(API_PORT, async () => {
   // so the demo uses the fake Supabase even if you have a real .env.
   process.env.VITE_SUPABASE_URL = API_URL
   process.env.VITE_SUPABASE_PUBLISHABLE_KEY = 'demo-key'
+  // Turns on demo-only screens, like the sign-in onboarding on the home page.
+  process.env.VITE_DEMO_MODE = 'true'
 
   const vite = await createServer({ server: { port: APP_PORT, strictPort: true } })
   await vite.listen()

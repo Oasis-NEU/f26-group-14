@@ -28,6 +28,7 @@ export default function ListingForm({ session, existingListing }) {
   const [newPhoto, setNewPhoto] = useState(null) // picked but not uploaded yet
   const [previewUrl, setPreviewUrl] = useState('')
   const [saving, setSaving] = useState(false)
+  const [sellerEmail, setSellerEmail] = useState('') // new listings only: the contact email buyers see
   const [error, setError] = useState('')
   const navigate = useNavigate()
   const userId = session.user.id
@@ -88,7 +89,9 @@ export default function ListingForm({ session, existingListing }) {
 
   // Returns an error message if something is wrong with the form, or '' if it's all good.
   function validate() {
-    if (title.trim() === '') return 'Please add a title.'
+    if (!newPhoto && !existingPhotoUrl) return 'Please add a photo of the item.'
+    if (title.trim() === '') return 'Please say what you\'re selling.'
+    if (description.trim() === '') return 'Please add a description.'
     if (price === '' || Number(price) < 0) return 'Please enter a price of 0 or more.'
     if (category === '') return 'Please pick a category.'
     if (condition === '') return 'Please pick a condition.'
@@ -97,6 +100,12 @@ export default function ListingForm({ session, existingListing }) {
     if (paymentMethods.length === 0) return 'Please pick at least one payment method.'
     if (newPhoto && !ALLOWED_PHOTO_TYPES.includes(newPhoto.type)) return 'Photo must be a JPEG, PNG, or WebP image.'
     if (newPhoto && newPhoto.size > MAX_PHOTO_SIZE) return 'Photo must be under 5 MB.'
+    if (!isEditing) {
+      const email = sellerEmail.trim().toLowerCase()
+      if (!email.endsWith('@northeastern.edu')) return 'Please enter your @northeastern.edu email.'
+      // The database only accepts the signed-in account's own email (RLS), so check it here first.
+      if (email !== session.user.email.toLowerCase()) return `That isn't the email you signed in with (${session.user.email}).`
+    }
     return ''
   }
 
@@ -132,7 +141,8 @@ export default function ListingForm({ session, existingListing }) {
       photoUrl = supabase.storage.from(LISTING_PHOTOS_BUCKET).getPublicUrl(newPhotoPath).data.publicUrl
     }
 
-    // Step 2: save the listing. seller_id and seller_email are filled in by the database.
+    // Step 2: save the listing. seller_id is filled in by the database, and RLS checks
+    // that seller_email matches the signed-in account.
     const fields = {
       title: title.trim(),
       description: description.trim(),
@@ -144,6 +154,7 @@ export default function ListingForm({ session, existingListing }) {
       payment_methods: paymentMethods,
       photo_url: photoUrl,
     }
+    if (!isEditing) fields.seller_email = sellerEmail.trim().toLowerCase()
 
     // .select('id').single() asks the database to send back the saved listing's id.
     const { data, error: saveError } = isEditing
@@ -173,9 +184,40 @@ export default function ListingForm({ session, existingListing }) {
 
   return (
     <>
-      <form className="form-stack" onSubmit={handleSubmit}>
+      <form className="form-stack" onSubmit={handleSubmit} noValidate>
+        <fieldset>
+          <legend>Photo</legend>
+
+          {/* On phones, capture="environment" opens the back camera directly.
+              On laptops it's ignored, so both buttons just open the file picker. */}
+          <label className="photo-button">
+            {shownPhoto ? 'Take new photo' : 'Take photo'}
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              capture="environment"
+              onChange={handlePhotoChange}
+            />
+          </label>
+          <label className="photo-button">
+            Choose from library
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handlePhotoChange}
+            />
+          </label>
+
+          {shownPhoto && (
+            <div>
+              <img className="photo-preview" src={shownPhoto} alt="Your listing photo" />
+              <button type="button" onClick={handleRemovePhoto}>Remove photo</button>
+            </div>
+          )}
+        </fieldset>
+
         <label>
-          Title
+          What are you selling?
           <input
             type="text"
             maxLength={100}
@@ -265,38 +307,22 @@ export default function ListingForm({ session, existingListing }) {
           ))}
         </fieldset>
 
-        <fieldset>
-          <legend>Photo (optional)</legend>
 
-          {/* On phones, capture="environment" opens the back camera directly.
-              On laptops it's ignored, so both buttons just open the file picker. */}
-          <label className="photo-button">
-            {shownPhoto ? 'Take new photo' : 'Take photo'}
+        {!isEditing && (
+          <label>
+            Your Northeastern email
             <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              capture="environment"
-              onChange={handlePhotoChange}
+              type="email"
+              autoComplete="email"
+              placeholder="you@northeastern.edu"
+              value={sellerEmail}
+              onChange={(e) => setSellerEmail(e.target.value)}
             />
+            <span className="field-hint">Signed-in buyers use this to contact you. It's never shown to guests.</span>
           </label>
-          <label className="photo-button">
-            Choose from library
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={handlePhotoChange}
-            />
-          </label>
+        )}
 
-          {shownPhoto && (
-            <div>
-              <img className="photo-preview" src={shownPhoto} alt="Your listing photo" />
-              <button type="button" onClick={handleRemovePhoto}>Remove photo</button>
-            </div>
-          )}
-        </fieldset>
-
-        <button type="submit" disabled={saving}>
+        <button type="submit" className="btn-primary" disabled={saving}>
           {isEditing ? (saving ? 'Saving...' : 'Save changes') : (saving ? 'Posting...' : 'Post listing')}
         </button>
       </form>

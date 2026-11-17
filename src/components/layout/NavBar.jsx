@@ -1,7 +1,7 @@
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import Logo from './Logo'
 
-// The bar across the top of every page (Canva: "HuskyExchange  HotDeals  Item Browser  Orders  Sell  👤").
+// The bar across the top of every page: HuskyExchange  HotDeals  Item Browser  Orders  Sell  Messages  Settings  👤
 //   session  - the logged-in user, or null for guests
 //   loading  - true until we know whether someone is logged in (hides the right side so it doesn't flicker)
 //   onSignOut
@@ -9,6 +9,8 @@ import Logo from './Logo'
 export default function NavBar({ session, loading, onSignOut }) {
   const location = useLocation()
   const isLanding = location.pathname === '/' && !session
+  // In demo mode the landing page is the sign-in screen itself, so a LOGIN button would be redundant.
+  const hideLogin = isLanding && import.meta.env.VITE_DEMO_MODE === 'true'
 
   return (
     <header className={isLanding ? 'site-header site-header-landing' : 'site-header'}>
@@ -26,11 +28,13 @@ export default function NavBar({ session, loading, onSignOut }) {
           <NavLink to="/feed">Item Browser</NavLink>
           <NavLink to="/orders">Orders</NavLink>
           <NavLink to="/sell">Sell</NavLink>
+          <NavLink to="/messages">Messages</NavLink>
+          <NavLink to="/settings">Settings</NavLink>
         </nav>
       )}
 
       <div className="site-account">
-        {!loading &&
+        {!loading && !hideLogin &&
           (session ? (
             // <details> opens and closes the menu without any extra state. Keying it on the path
             // closes it again whenever the user goes to another page.
@@ -40,7 +44,6 @@ export default function NavBar({ session, loading, onSignOut }) {
               </summary>
               <div className="account-menu-list">
                 <Link to={`/profile/${session.user.id}`}>My profile</Link>
-                <Link to="/settings">Settings</Link>
                 <button type="button" className="btn-ghost" onClick={onSignOut}>
                   Sign out
                 </button>

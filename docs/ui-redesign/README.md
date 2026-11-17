@@ -90,6 +90,18 @@ All of it lives in two files. [`src/index.css`](../../src/index.css) holds the t
 
 It isn't a replacement for testing against the real database. It doesn't enforce row-level security or column grants (guests can see `seller_email` in demo mode), and sign-up and emails are off.
 
+## Update 2026-11-16: onboarding, Messages, new Sell flow
+
+- **Moving background** (`src/index.css`): two blurred layers of the brand blues, on `body::before` and `body::after`, drift slowly. Only `transform` and `opacity` animate, so the browser doesn't repaint the page every frame. "Reduce motion" turns it off.
+- **Demo onboarding** ([`DemoOnboarding.jsx`](../../src/components/auth/DemoOnboarding.jsx)): in `npm run demo`, guests on `/` see a welcome (Browse, Sell, Meet up) next to the sign-in form. Signing in takes them straight to HotDeals. `scripts/demo.js` sets `VITE_DEMO_MODE=true`; without it, the normal landing page shows.
+- **Nav:** HotDeals · Item Browser · Orders · Sell · Messages · Settings. Settings moved out of the profile menu and into the bar.
+- **Messages** (`/messages`, login required): conversations on the left, the chat on the right. A conversation is one listing plus the other person ([`lib/conversations.js`](../../src/lib/conversations.js), which has tests). Listing pages have a **Message seller** button that opens `/messages?listing=ID&to=SELLER`. The real database has no `messages` table yet (MSG-\*), so outside the demo this tab shows "coming soon" instead of an error.
+- **Sell:** `/sell` shows "+ New listing" and your active listings; the form is at `/sell/new`. It now starts with the photo. The photo, "What are you selling?", the description, and **your Northeastern email** are required. The email must be the one you signed in with: the `listings` RLS policy rejects any other `seller_email`, so the form checks it first and shows a clear message.
+- **Demo server:**
+  - fakes the `messages` table
+  - checks `seller_email` the same way RLS does
+  - pulls photos out of supabase-js's multipart uploads (before, it saved the whole form, so uploaded photos didn't show)
+
 ## Known limits and follow-ups
 
 - **Austin owns the design system (DS-\*, TPL-\*).** These styles should become the starting tokens for it, not compete with it. Austin reviews this PR (FE-03).
